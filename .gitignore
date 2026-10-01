@@ -1,0 +1,18 @@
+# Capturas de otras apps usadas como moodboard local: son de terceros, no se publican.
+referencias/capturas/
+referencias/galeria.html
+
+# Archivos temporales y de editor
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+
+# Configuración local de herramientas
+.claude/
+
+# Renders temporales de diseño
+diseno/_m.*
+diseno/ui/_*

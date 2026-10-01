@@ -1,0 +1,9 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:transparent">
+<div id="a" style="width:1024px;height:1024px;display:grid;place-items:center;position:relative;overflow:hidden"></div>
+<script src="../ui/finn.js"></script>
+<script>
+const q=new URLSearchParams(location.search), fg=q.get('fg')==='1', size=fg?600:800;
+const a=document.getElementById('a');
+if(!fg) a.style.background='radial-gradient(circle at 30% 25%,#FFF9F0,#FFE9C7)';
+a.innerHTML='<div style="margin-top:'+(fg?40:50)+'px">'+finn('happy',size)+'</div>';
+</script>
