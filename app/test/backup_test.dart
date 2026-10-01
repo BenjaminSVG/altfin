@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:altfin/data/backup.dart';
 import 'package:altfin/data/database.dart';
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
@@ -16,6 +18,7 @@ void main() {
     await a.addGoal(GoalsCompanion.insert(name: 'Viaje', icon: 'plane', targetMinor: 5000000, savedMinor: const Value(3400000), currency: 'PYG'));
     await a.addRecurring(RecurringsCompanion.insert(name: 'Netflix', amountMinor: 45000, currency: 'PYG', dayOfMonth: 10));
     await a.markNoSpendDay(DateTime(2026, 9, 30));
+    await a.addDebt(DebtsCompanion.insert(name: 'Tarjeta', balanceMinor: 1000000, currency: 'PYG', annualRatePct: const Value(36), minPaymentMinor: 60000));
 
     final text = await Backup.toJsonString(a);
 
@@ -37,8 +40,25 @@ void main() {
     expect(goals.single.savedMinor, 3400000);
     expect((await b.select(b.recurrings).get()).single.name, 'Netflix');
     expect((await b.select(b.dayChecks).get()).length, 1);
+    final debt = (await b.select(b.debts).get()).single;
+    expect(debt.name, 'Tarjeta');
+    expect(debt.annualRatePct, 36);
     expect((await b.select(b.categories).get()).length, 10);
 
+    await a.close();
+    await b.close();
+  });
+
+  test('una copia vieja sin deudas igual se restaura', () async {
+    final a = AppDatabase(NativeDatabase.memory());
+    await a.setSetting('name', 'Beni');
+    final map = await Backup.toMap(a);
+    map.remove('debts'); // como las copias hechas antes de existir las deudas
+    final b = AppDatabase(NativeDatabase.memory());
+    await b.addDebt(DebtsCompanion.insert(name: 'x', balanceMinor: 1, currency: 'PYG', minPaymentMinor: 1));
+    await Backup.restore(b, Backup.parse(jsonEncode(map)));
+    expect(await b.getSetting('name'), 'Beni');
+    expect(await b.select(b.debts).get(), isEmpty);
     await a.close();
     await b.close();
   });

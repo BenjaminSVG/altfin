@@ -2,6 +2,16 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto sigue [versionado semántico](https://semver.org/lang/es/).
 
+## [0.2.0] — 2026-10-01
+
+### Agregado
+- Plan de pago de deudas (avalancha y bola de nieve) con pago extra, orden de pago, fecha estimada y comparación de intereses.
+- Registrar pagos a una deuda y borrarla.
+- La copia de seguridad incluye las deudas (las copias antiguas siguen restaurándose).
+- Migración de base de datos a la versión 3.
+- Atajo `Ctrl+N` y escritura del monto con el teclado en PC; panel de varias columnas en pantallas anchas.
+- 54 pruebas automáticas.
+
 ## [0.1.0] — 2026-10-01 (alfa)
 
 Primera versión pública.

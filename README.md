@@ -27,6 +27,7 @@ La mayoría de las apps de finanzas controlan tus gastos. AltFin va un paso más
 - **Presupuesto por categoría** con barras verde → naranja → rojo.
 - **Metas de ahorro** y **simulador de interés compuesto** (cuánto crece tu plata en 10 años).
 - **Gastos fijos** (alquiler, internet, Netflix) que se anotan solos el día de cobro.
+- **Plan de pago de deudas**: método avalancha (menos intereses) o bola de nieve (más motivación), con pago extra y fecha estimada para quedar libre de deudas.
 - **Informe** de 6 meses, tasa de ahorro y gastos por categoría.
 - **Finn y la gamificación:** racha diaria, XP, niveles, insignias y recordatorios con su voz.
 - **Privacidad primero:** todo se guarda en tu dispositivo. Sin cuenta, sin internet, sin anuncios. Bloqueo con PIN, **copia de seguridad** y exportación a **CSV**.
@@ -48,7 +49,7 @@ Las capturas se generan con datos de ejemplo. El diseño completo (mockups, sist
 
 ## Estado del proyecto
 
-Versión **0.1.0 (alfa)**. Funciona y está probada (44 pruebas automáticas, y uso real en Windows), pero todavía le faltan cosas. Ver la [hoja de ruta](#hoja-de-ruta).
+Versión **0.2.0 (alfa)**. Funciona y está probada (54 pruebas automáticas, y uso real en Windows), pero todavía le faltan cosas. Ver la [hoja de ruta](#hoja-de-ruta).
 
 | Plataforma | Estado |
 |---|---|
@@ -111,7 +112,7 @@ altfin/
 ## Hoja de ruta
 
 - [ ] Notificaciones en Windows (hoy solo Android)
-- [ ] Plan de pago de deudas (avalancha / bola de nieve)
+- [x] Plan de pago de deudas (avalancha / bola de nieve)
 - [ ] Huella digital además del PIN
 - [ ] Widgets de pantalla y atajo global en PC
 - [ ] Animaciones de Finn (Rive) y atuendos por nivel

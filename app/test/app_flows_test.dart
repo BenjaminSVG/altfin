@@ -76,6 +76,8 @@ Future<AppDatabase> _seed({bool onboarded = true, bool dark = false}) async {
       await db.addTxn(TxnsCompanion.insert(kind: 'expense', amountMinor: 3200000 + m * 150000, currency: 'PYG', categoryId: const Value(5), date: d));
       await db.addTxn(TxnsCompanion.insert(kind: 'saving', amountMinor: 1800000 + m * 200000, currency: 'PYG', date: d));
     }
+    await db.addDebt(DebtsCompanion.insert(name: 'Tarjeta', balanceMinor: 1000000, currency: 'PYG', annualRatePct: const Value(36), minPaymentMinor: 60000));
+    await db.addDebt(DebtsCompanion.insert(name: 'Préstamo', balanceMinor: 5000000, currency: 'PYG', annualRatePct: const Value(12), minPaymentMinor: 150000));
     await db.addRecurring(RecurringsCompanion.insert(name: 'Netflix', amountMinor: 45000, currency: 'PYG', categoryId: const Value(9), dayOfMonth: 10));
     await db.addRecurring(RecurringsCompanion.insert(name: 'Internet', amountMinor: 150000, currency: 'PYG', categoryId: const Value(6), dayOfMonth: 15));
     await db.setCategoryLimit(5, 1000000);
@@ -206,6 +208,24 @@ void main() {
     await t.tap(find.text('Informe'));
     await t.pumpAndSettle(const Duration(milliseconds: 100));
     await shot(t, '16-informe');
+    await finish(t, db);
+  });
+
+  testWidgets('plan de pago de deudas', (t) async {
+    final db = await _seed();
+    await boot(t, db, phone);
+    await t.tap(find.text('Metas'));
+    await t.pump(const Duration(milliseconds: 600));
+    await t.tap(find.text('Deudas'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    expect(find.text('DEBÉS EN TOTAL'), findsOneWidget);
+    expect(find.textContaining('Libre de deudas en'), findsOneWidget);
+    expect(find.text('Tarjeta'), findsOneWidget);
+    await shot(t, '18-deudas');
+    // Cambiar a bola de nieve actualiza el plan.
+    await t.tap(find.text('Bola de nieve'));
+    await t.pump(const Duration(milliseconds: 600));
+    expect(await t.runAsync(() => db.getSetting('debt_strategy')), 'snowball');
     await finish(t, db);
   });
 

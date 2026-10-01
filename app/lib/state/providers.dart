@@ -32,6 +32,8 @@ class AppSettings {
     this.reminders = true,
     this.pinHash = '',
     this.pinSalt = '',
+    this.debtStrategy = 'avalanche',
+    this.debtExtraMinor = 0,
   });
 
   factory AppSettings.fromMap(Map<String, String> m) => AppSettings(
@@ -49,6 +51,8 @@ class AppSettings {
         reminders: (m['reminders'] ?? '1') == '1',
         pinHash: m['pin_hash'] ?? '',
         pinSalt: m['pin_salt'] ?? '',
+        debtStrategy: m['debt_strategy'] ?? 'avalanche',
+        debtExtraMinor: int.tryParse(m['debt_extra'] ?? '') ?? 0,
       );
 
   final bool onboarded;
@@ -65,6 +69,8 @@ class AppSettings {
   final bool reminders;
   final String pinHash;
   final String pinSalt;
+  final String debtStrategy;
+  final int debtExtraMinor;
 
   bool get hasPin => pinHash.isNotEmpty;
 
@@ -201,3 +207,7 @@ final recentTxnsProvider = StreamProvider<List<Txn>>((ref) {
   final now = ref.watch(clockProvider)();
   return ref.watch(dbProvider).watchTxnsSince(DateTime(now.year, now.month - 5));
 });
+
+final debtsProvider = StreamProvider<List<Debt>>(
+  (ref) => ref.watch(dbProvider).watchDebts(),
+);

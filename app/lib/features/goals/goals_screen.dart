@@ -11,6 +11,7 @@ import '../../state/providers.dart';
 import '../../ui/finn/finn.dart';
 import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/widgets.dart';
+import '../debts/debts_screen.dart';
 import '../grow/grow_screen.dart';
 
 const _goalIcons = [
@@ -52,6 +53,22 @@ class GoalsScreen extends ConsumerWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Simulador de crecimiento', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
               Text('Mirá cuánto puede crecer tu plata con interés compuesto.',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+          const Icon(Icons.chevron_right_rounded),
+        ]),
+      ),
+      const SizedBox(height: 12),
+      AltCard(
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DebtsScreen())),
+        child: Row(children: [
+          const IconTile('card', tone: 'b', size: 56),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Deudas', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+              Text('Armá tu plan para salir de ellas: avalancha o bola de nieve.',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
             ]),
           ),

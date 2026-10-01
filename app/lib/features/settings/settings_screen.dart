@@ -18,6 +18,7 @@ import '../../services/notification_service.dart';
 import '../../state/providers.dart';
 import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/widgets.dart';
+import '../debts/debts_screen.dart';
 import '../reports/reports_screen.dart';
 import '../subscriptions/subscriptions_screen.dart';
 
@@ -95,6 +96,8 @@ class SettingsScreen extends ConsumerWidget {
           child: Dividers(children: [
             _navRow(c, 'tv', 'p', 'Gastos fijos y suscripciones', 'Alquiler, internet, Netflix...',
                 () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionsScreen()))),
+            _navRow(c, 'card', 'b', 'Deudas', 'Plan de pago: avalancha o bola de nieve',
+                () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DebtsScreen()))),
             _navRow(c, 'chart', 'b', 'Informe', 'Últimos 6 meses y categorías',
                 () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReportsScreen()))),
             _navRow(c, 'save', 'o', 'Exportar a CSV', 'Abrilo en Excel o Google Sheets', () => _export(context, ref)),

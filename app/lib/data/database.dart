@@ -59,6 +59,18 @@ class Recurrings extends Table {
   TextColumn get lastMonth => text().withDefault(const Constant(''))();
 }
 
+/// Deudas (tarjeta, préstamo...) para el plan de pago.
+class Debts extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  IntColumn get balanceMinor => integer()();
+  TextColumn get currency => text()();
+
+  /// Tasa de interés anual en % (36 = 36 %).
+  RealColumn get annualRatePct => real().withDefault(const Constant(0))();
+  IntColumn get minPaymentMinor => integer()();
+}
+
 /// Días en que el usuario confirmó "hoy no gasté" (cuentan para la racha).
 class DayChecks extends Table {
   DateTimeColumn get day => dateTime()();
@@ -76,13 +88,13 @@ class Settings extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings])
+@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings, Debts])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
       : super(executor ?? driftDatabase(name: 'altfin'));
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -92,8 +104,24 @@ class AppDatabase extends _$AppDatabase {
         },
         onUpgrade: (m, from, to) async {
           if (from < 2) await m.createTable(recurrings);
+          if (from < 3) await m.createTable(debts);
         },
       );
+
+  // ---- Deudas ----
+  Stream<List<Debt>> watchDebts() => select(debts).watch();
+
+  Future<int> addDebt(DebtsCompanion d) => into(debts).insert(d);
+
+  Future<void> deleteDebt(int id) => (delete(debts)..where((t) => t.id.equals(id))).go();
+
+  /// Registra un pago: baja el saldo (nunca por debajo de 0).
+  Future<void> payDebt(int id, int amountMinor) async {
+    final d = await (select(debts)..where((t) => t.id.equals(id))).getSingle();
+    final next = d.balanceMinor - amountMinor;
+    await (update(debts)..where((t) => t.id.equals(id)))
+        .write(DebtsCompanion(balanceMinor: Value(next < 0 ? 0 : next)));
+  }
 
   // ---- Recurrentes ----
   Stream<List<Recurring>> watchRecurrings() => select(recurrings).watch();
