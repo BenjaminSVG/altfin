@@ -265,7 +265,8 @@ class SettingsScreen extends ConsumerWidget {
       final text = utf8.decode(await File(f.path!).readAsBytes());
       data = Backup.parse(text);
     } on FormatException catch (e) {
-      return _toast(context, e.message);
+      if (context.mounted) _toast(context, e.message);
+      return;
     }
     if (!context.mounted) return;
     final ok = await showDialog<bool>(

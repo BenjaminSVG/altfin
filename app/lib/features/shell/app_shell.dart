@@ -80,7 +80,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   Widget build(BuildContext context) {
     // Cada vez que cambian los registros, se reprograman los recordatorios.
-    ref.listen(loggedDaysProvider, (_, __) => _reschedule());
+    ref.listen(loggedDaysProvider, (_, _) => _reschedule());
     ref.listen(settingsProvider, (a, b) {
       if (a?.value?.reminders != b.value?.reminders ||
           a?.value?.reminderHour != b.value?.reminderHour) {

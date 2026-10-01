@@ -48,36 +48,46 @@ String _faceAndArms(FinnPose pose) {
 String _face(FinnPose pose) {
   switch (pose) {
     case FinnPose.happy:
-      return _eyes + _line('M-20 22 Q0 44 20 22');
+      return [_eyes, _line('M-20 22 Q0 44 20 22')].join();
     case FinnPose.celebrate:
-      return _line('M-45 -4 Q-32 -24 -19 -4', 6) +
-          _line('M19 -4 Q32 -24 45 -4', 6) +
-          '<path d="M-26 16 Q0 62 26 16 Z" fill="$_ink"/>'
-              '<path d="M-14 34 Q0 46 14 34 Q0 28 -14 34 Z" fill="#FF8FA3"/>';
+      return [
+        _line('M-45 -4 Q-32 -24 -19 -4', 6),
+        _line('M19 -4 Q32 -24 45 -4', 6),
+        '<path d="M-26 16 Q0 62 26 16 Z" fill="$_ink"/>',
+        '<path d="M-14 34 Q0 46 14 34 Q0 28 -14 34 Z" fill="#FF8FA3"/>',
+      ].join();
     case FinnPose.think:
-      return '<circle cx="-30" cy="-10" r="13" fill="$_ink"/><circle cx="34" cy="-10" r="13" fill="$_ink"/>'
-              '<circle cx="-26" cy="-16" r="5" fill="#fff"/><circle cx="38" cy="-16" r="5" fill="#fff"/>' +
-          _line('M-48 -34 Q-32 -42 -16 -34', 4) +
-          _line('M16 -38 Q32 -48 48 -38', 4) +
-          _line('M-10 30 Q4 26 16 32') +
-          '<ellipse cx="52" cy="62" rx="15" ry="12" fill="#2FB67C" stroke="#14704A" stroke-width="2.5"/>';
+      return [
+        '<circle cx="-30" cy="-10" r="13" fill="$_ink"/><circle cx="34" cy="-10" r="13" fill="$_ink"/>',
+        '<circle cx="-26" cy="-16" r="5" fill="#fff"/><circle cx="38" cy="-16" r="5" fill="#fff"/>',
+        _line('M-48 -34 Q-32 -42 -16 -34', 4),
+        _line('M16 -38 Q32 -48 48 -38', 4),
+        _line('M-10 30 Q4 26 16 32'),
+        '<ellipse cx="52" cy="62" rx="15" ry="12" fill="#2FB67C" stroke="#14704A" stroke-width="2.5"/>',
+      ].join();
     case FinnPose.worry:
-      return _eyes +
-          _line('M-50 -24 L-18 -38') +
-          _line('M50 -24 L18 -38') +
-          _line('M-22 36 Q-11 26 0 36 Q11 46 22 36') +
-          '<path d="M78 -50 Q92 -26 78 -16 Q64 -26 78 -50 Z" fill="#7CC4FF" stroke="#4DA3FF" stroke-width="2"/>';
+      return [
+        _eyes,
+        _line('M-50 -24 L-18 -38'),
+        _line('M50 -24 L18 -38'),
+        _line('M-22 36 Q-11 26 0 36 Q11 46 22 36'),
+        '<path d="M78 -50 Q92 -26 78 -16 Q64 -26 78 -50 Z" fill="#7CC4FF" stroke="#4DA3FF" stroke-width="2"/>',
+      ].join();
     case FinnPose.sleep:
-      return _line('M-46 -4 Q-32 8 -18 -4', 6) +
-          _line('M18 -4 Q32 8 46 -4', 6) +
-          '<ellipse cx="0" cy="34" rx="8" ry="6" fill="$_ink"/>'
-              '<path d="M78 -92h22l-22 24h22" stroke="#4DA3FF" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
-              '<path d="M108 -118h14l-14 16h14" stroke="#4DA3FF" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+      return [
+        _line('M-46 -4 Q-32 8 -18 -4', 6),
+        _line('M18 -4 Q32 8 46 -4', 6),
+        '<ellipse cx="0" cy="34" rx="8" ry="6" fill="$_ink"/>',
+        '<path d="M78 -92h22l-22 24h22" stroke="#4DA3FF" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+        '<path d="M108 -118h14l-14 16h14" stroke="#4DA3FF" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+      ].join();
     case FinnPose.rich:
-      return _eyes +
-          _line('M-20 22 Q0 44 20 22') +
-          '<circle cx="32" cy="-6" r="24" fill="#fff" fill-opacity=".25" stroke="#E8A317" stroke-width="4"/>'
-              '<path d="M44 14 Q60 40 52 64" fill="none" stroke="#E8A317" stroke-width="3"/>';
+      return [
+        _eyes,
+        _line('M-20 22 Q0 44 20 22'),
+        '<circle cx="32" cy="-6" r="24" fill="#fff" fill-opacity=".25" stroke="#E8A317" stroke-width="4"/>',
+        '<path d="M44 14 Q60 40 52 64" fill="none" stroke="#E8A317" stroke-width="3"/>',
+      ].join();
   }
 }
 
