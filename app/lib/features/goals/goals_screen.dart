@@ -156,6 +156,7 @@ class GoalsScreen extends ConsumerWidget {
         : (months == null ? 'Sin ahorro mensual' : 'Listo en ~$months ${months == 1 ? 'mes' : 'meses'}');
     return AltCard(
       onTap: () => _contribute(context, ref, g, cur),
+      onLongPress: () => _options(context, ref, g, cur),
       child: Row(children: [
         IconTile(g.icon, tone: g.tone, size: 54),
         const SizedBox(width: 14),
@@ -186,6 +187,74 @@ class GoalsScreen extends ConsumerWidget {
           ]),
         ),
       ]),
+    );
+  }
+
+  /// Menú de la meta (pulsación larga): plazo, monto y borrar.
+  Future<void> _options(BuildContext context, WidgetRef ref, Goal g, Currency cur) async {
+    final db = ref.read(dbProvider);
+    final now = ref.read(clockProvider)();
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          ListTile(
+            title: Text(g.name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+          ),
+          ListTile(
+            leading: const Icon(Icons.event_rounded),
+            title: const Text('Cambiar plazo'),
+            onTap: () async {
+              Navigator.pop(ctx);
+              final months = await showDialog<int?>(
+                context: context,
+                builder: (d) => SimpleDialog(title: const Text('¿En cuántos meses?'), children: [
+                  SimpleDialogOption(onPressed: () => Navigator.pop(d, 0), child: const Text('Sin fecha')),
+                  for (final m in const [3, 6, 12, 24])
+                    SimpleDialogOption(onPressed: () => Navigator.pop(d, m), child: Text('$m meses')),
+                ]),
+              );
+              if (months == null) return;
+              await db.setGoalDeadline(g.id, months == 0 ? null : DateTime(now.year, now.month + months, now.day));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.edit_rounded),
+            title: const Text('Cambiar monto objetivo'),
+            onTap: () async {
+              Navigator.pop(ctx);
+              final ctl = TextEditingController(text: '${g.targetMinor ~/ cur.factor}');
+              final res = await showDialog<String>(
+                context: context,
+                builder: (d) => AlertDialog(
+                  title: const Text('Monto objetivo'),
+                  content: TextField(
+                    controller: ctl,
+                    autofocus: true,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(prefixText: '${cur.symbol} '),
+                  ),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(d), child: const Text('Cancelar')),
+                    TextButton(onPressed: () => Navigator.pop(d, ctl.text), child: const Text('Guardar')),
+                  ],
+                ),
+              );
+              final v = int.tryParse(res ?? '');
+              if (v != null && v > 0) await db.setGoalTarget(g.id, v * cur.factor);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.delete_outline_rounded),
+            title: const Text('Borrar meta'),
+            onTap: () async {
+              await db.deleteGoal(g.id);
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+          ),
+        ]),
+      ),
     );
   }
 

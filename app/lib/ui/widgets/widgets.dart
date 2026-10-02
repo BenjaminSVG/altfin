@@ -13,6 +13,7 @@ class AltCard extends StatelessWidget {
     this.gradient,
     this.borderColor,
     this.onTap,
+    this.onLongPress,
   });
 
   final Widget child;
@@ -21,6 +22,7 @@ class AltCard extends StatelessWidget {
   final Gradient? gradient;
   final Color? borderColor;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +40,8 @@ class AltCard extends StatelessWidget {
       ),
       child: child,
     );
-    if (onTap == null) return box;
-    return GestureDetector(onTap: onTap, behavior: HitTestBehavior.opaque, child: box);
+    if (onTap == null && onLongPress == null) return box;
+    return GestureDetector(onTap: onTap, onLongPress: onLongPress, behavior: HitTestBehavior.opaque, child: box);
   }
 }
 

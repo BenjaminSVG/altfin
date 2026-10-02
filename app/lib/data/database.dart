@@ -417,6 +417,11 @@ class AppDatabase extends _$AppDatabase {
         .write(GoalsCompanion(savedMinor: Value(g.savedMinor + amountMinor)));
   }
 
+  Future<void> setGoalDeadline(int id, DateTime? deadline) =>
+      (update(goals)..where((t) => t.id.equals(id))).write(GoalsCompanion(deadline: Value(deadline)));
+
+  Future<void> deleteGoal(int id) => (delete(goals)..where((t) => t.id.equals(id))).go();
+
   Future<void> setGoalTarget(int id, int targetMinor) =>
       (update(goals)..where((t) => t.id.equals(id))).write(GoalsCompanion(targetMinor: Value(targetMinor)));
 

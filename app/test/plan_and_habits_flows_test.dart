@@ -338,6 +338,35 @@ void main() {
     await finish(t, db);
   });
 
+  testWidgets('metas: cambiar plazo y monto, y borrar con pulsación larga', (t) async {
+    final db = await freshDb(onboarded: true);
+    await t.runAsync(() => db.addGoal(GoalsCompanion.insert(name: 'Moto', icon: 'plane', targetMinor: 1000, currency: 'PYG')));
+    await boot(t, db);
+    await t.tap(find.text('Metas'));
+    await t.pump(const Duration(milliseconds: 600));
+    Future<void> menu(String item) async {
+      await t.longPress(find.text('Moto'));
+      await t.pumpAndSettle(const Duration(milliseconds: 100));
+      await t.tap(find.text(item));
+      await t.pumpAndSettle(const Duration(milliseconds: 100));
+    }
+
+    await menu('Cambiar plazo');
+    await t.tap(find.text('12 meses'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    expect((await t.runAsync(() => db.select(db.goals).get()))!.single.deadline, DateTime(2027, 10, 12));
+
+    await menu('Cambiar monto objetivo');
+    await t.enterText(find.byType(TextField).first, '5000');
+    await t.tap(find.text('Guardar'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    expect((await t.runAsync(() => db.select(db.goals).get()))!.single.targetMinor, 5000);
+
+    await menu('Borrar meta');
+    expect(await t.runAsync(() => db.select(db.goals).get()), isEmpty);
+    await finish(t, db);
+  });
+
   testWidgets('en Ajustes se puede quitar el sueldo y el porcentaje', (t) async {
     final db = await freshDb(onboarded: true);
     await boot(t, db);
