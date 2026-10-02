@@ -5,6 +5,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 ## [Sin publicar]
 
 ### Agregado
+- **Notificaciones en Android:** ahora la app pide el permiso al abrir (en Android 13+ no se pedía nunca y los recordatorios no sonaban) y usa un ícono propio de Finn.
+- Los retos nuevos empiezan mañana si hoy ya gastaste en ese rubro (antes nacían perdidos). Metas reorganizada con grilla de herramientas; "Dividir gasto" en pantalla completa.
 - **Metas con plazo:** al crear una meta se puede elegir en cuántos meses (3, 6, 12, 24); la tarjeta muestra cuánto ahorrar por mes y si ya vas bien con tu plan.
 - **Editar metas:** pulsación larga en una meta para cambiar el plazo, cambiar el monto objetivo o borrarla.
 - **Widgets de pantalla de Android:** "Anotar gasto" (un toque abre nuevo gasto), "Podés gastar hoy" (monto del día y botón +) y "Racha". Se actualizan solos con tus datos. Usa `home_widget`. Sin probar todavía en un celular real.

@@ -72,9 +72,9 @@ class FinnScreen extends ConsumerWidget {
       ),
       const SizedBox(height: 14),
       Row(children: [
-        _stat(context, 'flame', '$streak', 'días de racha'),
+        _stat(context, 'flame', '$streak', streak == 1 ? 'día de racha' : 'días de racha'),
         const SizedBox(width: 10),
-        _stat(context, 'medal', '$unlocked', 'insignias'),
+        _stat(context, 'medal', '$unlocked', unlocked == 1 ? 'insignia' : 'insignias'),
         const SizedBox(width: 10),
         _stat(context, 'star', '${settings.xp}', 'XP total'),
       ]),

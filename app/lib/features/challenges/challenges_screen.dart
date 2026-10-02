@@ -18,6 +18,7 @@ class ChallengesScreen extends ConsumerWidget {
     final c = context.alt;
     final views = ref.watch(challengeViewsProvider);
     final cats = ref.watch(categoriesProvider).value ?? const <Category>[];
+    ref.watch(recentTxnsProvider); // se mantiene activo para saber si hoy ya hubo gastos al crear un reto
 
     return Scaffold(
       appBar: AppBar(title: const Text('Retos sin gasto', style: TextStyle(fontWeight: FontWeight.w900))),
@@ -74,11 +75,18 @@ class ChallengesScreen extends ConsumerWidget {
               ? 'Gastaste el ${p.failedOn!.day}/${p.failedOn!.month}. Podés empezar de nuevo.'
               : p.completed
                   ? '${p.days} días sin gastar. ¡Muy bien!'
-                  : '${p.cleanDays} de ${p.days} días${p.todayClean ? ', hoy vas bien' : ''}',
+                  : _startsLater(ref, v.challenge)
+                      ? 'Empieza mañana, porque hoy ya gastaste en esto.'
+                      : '${p.cleanDays} de ${p.days} días${p.todayClean ? ', hoy vas bien' : ''}',
           style: TextStyle(color: c.muted, fontSize: 12, fontWeight: FontWeight.w700),
         ),
       ]),
     );
+  }
+
+  bool _startsLater(WidgetRef ref, Challenge c) {
+    final now = ref.read(clockProvider)();
+    return c.startedOn.isAfter(DateTime(now.year, now.month, now.day));
   }
 
   Future<void> _options(BuildContext context, WidgetRef ref, ChallengeView v) async {
@@ -97,7 +105,7 @@ class ChallengesScreen extends ConsumerWidget {
                   name: v.challenge.name,
                   categoryId: Value(v.challenge.categoryId),
                   days: v.challenge.days,
-                  startedOn: ref.read(clockProvider)(),
+                  startedOn: _startFor(ref, v.challenge.categoryId),
                 ));
                 if (ctx.mounted) Navigator.pop(ctx);
               },
@@ -113,6 +121,20 @@ class ChallengesScreen extends ConsumerWidget {
         ]),
       ),
     );
+  }
+
+  /// Día de inicio: hoy, o mañana si hoy ya hubo un gasto de ese tipo (si no, nacería perdido).
+  DateTime _startFor(WidgetRef ref, int? categoryId) {
+    final now = ref.read(clockProvider)();
+    final today = DateTime(now.year, now.month, now.day);
+    final cats = ref.read(categoriesProvider).value ?? const <Category>[];
+    final txns = ref.read(recentTxnsProvider).value ?? const <Txn>[];
+    final wantIds = {for (final c in cats) if (c.block == 'want') c.id};
+    final spentToday = txns.any((t) =>
+        t.kind == 'expense' &&
+        DateTime(t.date.year, t.date.month, t.date.day) == today &&
+        (categoryId == null ? wantIds.contains(t.categoryId) : t.categoryId == categoryId));
+    return spentToday ? DateTime(today.year, today.month, today.day + 1) : today;
   }
 
   Future<void> _create(BuildContext context, WidgetRef ref, List<Category> cats) async {
@@ -147,12 +169,11 @@ class ChallengesScreen extends ConsumerWidget {
             TextButton(
               onPressed: () async {
                 final scope = catId == null ? 'gustos' : cats.firstWhere((k) => k.id == catId).name.toLowerCase();
-                final now = ref.read(clockProvider)();
                 await ref.read(dbProvider).addChallenge(ChallengesCompanion.insert(
                       name: '$days días sin $scope',
                       categoryId: Value(catId),
                       days: days,
-                      startedOn: DateTime(now.year, now.month, now.day),
+                      startedOn: _startFor(ref, catId),
                     ));
                 if (ctx.mounted) Navigator.pop(ctx);
               },

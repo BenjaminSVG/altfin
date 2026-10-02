@@ -6,7 +6,7 @@ import 'dart:ui' as ui;
 import 'package:altfin/data/database.dart';
 import 'package:altfin/main.dart';
 import 'package:altfin/state/providers.dart';
-import 'package:drift/drift.dart' show driftRuntimeOptions;
+import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -364,6 +364,27 @@ void main() {
 
     await menu('Borrar meta');
     expect(await t.runAsync(() => db.select(db.goals).get()), isEmpty);
+    await finish(t, db);
+  });
+
+  testWidgets('un reto nuevo empieza mañana si hoy ya gastaste en ese rubro', (t) async {
+    final db = await freshDb(onboarded: true);
+    await t.runAsync(() => db.addTxn(TxnsCompanion.insert(
+        kind: 'expense', amountMinor: 25000, currency: 'PYG', categoryId: const Value(1), date: _now)));
+    await boot(t, db);
+    await t.tap(find.text('Finn').last);
+    await t.pump(const Duration(milliseconds: 600));
+    await tapText(t, 'Retos sin gasto');
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    await t.tap(find.text('NUEVO RETO'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    await t.tap(find.text('Empezar'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    final c = (await t.runAsync(() => db.select(db.challenges).get()))!.single;
+    expect(c.categoryId, 1);
+    expect(c.startedOn, DateTime(2026, 10, 13));
+    expect(find.textContaining('Empieza mañana'), findsOneWidget);
+    expect(find.text('Perdido'), findsNothing);
     await finish(t, db);
   });
 

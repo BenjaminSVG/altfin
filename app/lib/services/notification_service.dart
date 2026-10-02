@@ -41,7 +41,7 @@ class NotificationService {
       tz.setLocalLocation(tz.getLocation('America/Asuncion'));
     }
     const settings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      android: AndroidInitializationSettings('@drawable/ic_stat_finn'),
       windows: WindowsInitializationSettings(
         appName: 'AltFin',
         appUserModelId: 'py.altfin.AltFin',
@@ -126,6 +126,7 @@ class NotificationService {
   /// Notificación inmediata de prueba (botón en Ajustes).
   Future<void> showTest() async {
     if (!_ready) return;
+    if (!await requestPermission()) return;
     await _plugin.show(
       id: 1,
       title: '¡Hola, soy Finn!',

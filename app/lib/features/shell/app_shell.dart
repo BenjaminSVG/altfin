@@ -65,6 +65,8 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
   // Retos que ya se están premiando (evita dar el XP dos veces mientras se guarda).
   final _rewarding = <int>{};
 
+  bool _askedPermission = false;
+
   bool _addOpen = false;
 
   // Atajos globales dentro de la app (no dependen de qué widget tiene el foco).
@@ -112,6 +114,11 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
     final s = ref.read(settingsProvider).value;
     final logged = ref.read(loggedDaysProvider).value;
     if (s == null || logged == null) return;
+    // Android 13+: el permiso hay que pedirlo; si no, los recordatorios no suenan nunca.
+    if (s.reminders && !_askedPermission) {
+      _askedPermission = true;
+      NotificationService.instance.requestPermission();
+    }
     final now = ref.read(clockProvider)();
     NotificationService.instance.reschedule(
       enabled: s.reminders,
