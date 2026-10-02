@@ -8,6 +8,7 @@ import '../../ui/finn/finn.dart';
 import '../../ui/icons/app_icon.dart';
 import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/widgets.dart';
+import '../challenges/challenges_screen.dart';
 import '../settings/settings_screen.dart';
 
 class FinnScreen extends ConsumerWidget {
@@ -32,6 +33,7 @@ class FinnScreen extends ConsumerWidget {
       ('Racha de 7 días', 'flame', 'o', streak >= 7),
       ('Meta cumplida', 'trophy', 'b', goals.any((g) => g.savedMinor >= g.targetMinor && g.targetMinor > 0)),
       ('Racha de 30 días', 'medal', 'o', streak >= 30),
+      ('Reto cumplido', 'flame', 'g', ref.watch(challengeViewsProvider).any((v) => v.progress.completed)),
       ('Nivel 10', 'crown', 'o', level >= 10),
     ];
     final unlocked = badges.where((b) => b.$4).length;
@@ -76,6 +78,22 @@ class FinnScreen extends ConsumerWidget {
         const SizedBox(width: 10),
         _stat(context, 'star', '${settings.xp}', 'XP total'),
       ]),
+      const SizedBox(height: 14),
+      AltCard(
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChallengesScreen())),
+        child: Row(children: [
+          const IconTile('flame', tone: 'o', size: 52),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Retos sin gasto', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+              Text('Ej. 7 días sin comer afuera. Ganás XP al cumplirlos.',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+          const Icon(Icons.chevron_right_rounded),
+        ]),
+      ),
       const SizedBox(height: 14),
       AltCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

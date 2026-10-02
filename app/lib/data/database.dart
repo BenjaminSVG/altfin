@@ -135,6 +135,18 @@ class ShareEntries extends Table {
   DateTimeColumn get date => dateTime()();
 }
 
+/// Retos sin gasto. [categoryId] null = todos los gastos de "gustos".
+class Challenges extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  IntColumn get categoryId => integer().nullable().references(Categories, #id)();
+  IntColumn get days => integer()();
+  DateTimeColumn get startedOn => dateTime()();
+
+  /// Ya se entregó el XP de premio.
+  BoolColumn get rewarded => boolean().withDefault(const Constant(false))();
+}
+
 /// Días en que el usuario confirmó "hoy no gasté" (cuentan para la racha).
 class DayChecks extends Table {
   DateTimeColumn get day => dateTime()();
@@ -152,13 +164,13 @@ class Settings extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings, Debts, Habits, Holdings, NetSnapshots, Friends, ShareEntries])
+@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings, Debts, Habits, Holdings, NetSnapshots, Friends, ShareEntries, Challenges])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
       : super(executor ?? driftDatabase(name: 'altfin'));
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -178,6 +190,7 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(friends);
             await m.createTable(shareEntries);
           }
+          if (from < 7) await m.createTable(challenges);
         },
       );
 
@@ -196,6 +209,16 @@ class AppDatabase extends _$AppDatabase {
       });
 
   Future<int> addShareEntry(ShareEntriesCompanion e) => into(shareEntries).insert(e);
+
+  // ---- Retos sin gasto ----
+  Stream<List<Challenge>> watchChallenges() => select(challenges).watch();
+
+  Future<int> addChallenge(ChallengesCompanion c) => into(challenges).insert(c);
+
+  Future<void> deleteChallenge(int id) => (delete(challenges)..where((t) => t.id.equals(id))).go();
+
+  Future<void> markChallengeRewarded(int id) =>
+      (update(challenges)..where((t) => t.id.equals(id))).write(const ChallengesCompanion(rewarded: Value(true)));
 
   // ---- Patrimonio neto ----
   Stream<List<Holding>> watchHoldings() => select(holdings).watch();

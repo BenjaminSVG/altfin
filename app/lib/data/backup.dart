@@ -24,6 +24,7 @@ class Backup {
         'habits': [for (final r in await db.select(db.habits).get()) r.toJson()],
         'holdings': [for (final r in await db.select(db.holdings).get()) r.toJson()],
         'netSnapshots': [for (final r in await db.select(db.netSnapshots).get()) r.toJson()],
+        'challenges': [for (final r in await db.select(db.challenges).get()) r.toJson()],
         'friends': [for (final r in await db.select(db.friends).get()) r.toJson()],
         'shareEntries': [for (final r in await db.select(db.shareEntries).get()) r.toJson()],
       };
@@ -63,6 +64,7 @@ class Backup {
       await db.delete(db.recurrings).go();
       await db.delete(db.debts).go();
       await db.delete(db.habits).go();
+      await db.delete(db.challenges).go();
       await db.delete(db.shareEntries).go();
       await db.delete(db.friends).go();
       await db.delete(db.holdings).go();
@@ -78,6 +80,7 @@ class Backup {
         b.insertAll(db.dayChecks, [for (final r in rows('dayChecks')) DayCheck.fromJson(r).toCompanion(true)]);
         b.insertAll(db.settings, [for (final r in rows('settings')) Setting.fromJson(r).toCompanion(true)]);
         b.insertAll(db.habits, [for (final r in rows('habits')) Habit.fromJson(r).toCompanion(true)]);
+        b.insertAll(db.challenges, [for (final r in rows('challenges')) Challenge.fromJson(r).toCompanion(true)]);
         b.insertAll(db.friends, [for (final r in rows('friends')) Friend.fromJson(r).toCompanion(true)]);
         b.insertAll(db.shareEntries, [for (final r in rows('shareEntries')) ShareEntry.fromJson(r).toCompanion(true)]);
         b.insertAll(db.holdings, [for (final r in rows('holdings')) Holding.fromJson(r).toCompanion(true)]);

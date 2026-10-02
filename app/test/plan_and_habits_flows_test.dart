@@ -291,6 +291,32 @@ void main() {
     await finish(t, db);
   });
 
+  testWidgets('retos sin gasto: crear uno y recibir XP por uno cumplido', (t) async {
+    final db = await freshDb(onboarded: true);
+    // Un reto de 3 días que empezó hace 8 días y nunca se gastó: cumplido.
+    await t.runAsync(() => db.addChallenge(ChallengesCompanion.insert(
+        name: '3 días sin ocio', days: 3, startedOn: DateTime(2026, 10, 4))));
+    await boot(t, db);
+    await t.pump(const Duration(milliseconds: 600));
+    expect(await _get(t, db, 'xp'), '150');
+    expect((await t.runAsync(() => db.select(db.challenges).get()))!.single.rewarded, isTrue);
+
+    await t.tap(find.text('Finn').last);
+    await t.pump(const Duration(milliseconds: 600));
+    await tapText(t, 'Retos sin gasto');
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    expect(find.text('¡Cumplido!'), findsOneWidget);
+    await t.tap(find.text('NUEVO RETO'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    await t.tap(find.text('Empezar'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    final all = await t.runAsync(() => db.select(db.challenges).get());
+    expect(all!.length, 2);
+    expect(all.last.days, 7);
+    await shot(t, '28-retos');
+    await finish(t, db);
+  });
+
   testWidgets('en Ajustes se puede quitar el sueldo y el porcentaje', (t) async {
     final db = await freshDb(onboarded: true);
     await boot(t, db);

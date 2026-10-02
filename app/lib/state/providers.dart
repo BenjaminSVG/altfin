@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/database.dart';
+import '../domain/challenge_rule.dart';
 import '../domain/finance_engine.dart';
 import '../domain/fx.dart';
 import '../domain/net_worth.dart';
@@ -235,6 +236,43 @@ final recentTxnsProvider = StreamProvider<List<Txn>>((ref) {
 final debtsProvider = StreamProvider<List<Debt>>(
   (ref) => ref.watch(dbProvider).watchDebts(),
 );
+
+final challengesProvider = StreamProvider<List<Challenge>>(
+  (ref) => ref.watch(dbProvider).watchChallenges(),
+);
+
+/// Un reto con su avance calculado con los gastos reales.
+class ChallengeView {
+  const ChallengeView(this.challenge, this.progress);
+
+  final Challenge challenge;
+  final ChallengeProgress progress;
+}
+
+final challengeViewsProvider = Provider<List<ChallengeView>>((ref) {
+  final list = ref.watch(challengesProvider).value ?? const <Challenge>[];
+  if (list.isEmpty) return const [];
+  final cats = ref.watch(categoriesProvider).value ?? const <Category>[];
+  final txns = ref.watch(recentTxnsProvider).value ?? const <Txn>[];
+  final now = ref.watch(clockProvider)();
+  final wantIds = {for (final c in cats) if (c.block == 'want') c.id};
+  return [
+    for (final c in list)
+      ChallengeView(
+        c,
+        ChallengeRule.evaluate(
+          start: c.startedOn,
+          days: c.days,
+          today: now,
+          spendDays: {
+            for (final t in txns)
+              if (t.kind == 'expense' && (c.categoryId == null ? wantIds.contains(t.categoryId) : t.categoryId == c.categoryId))
+                DateTime(t.date.year, t.date.month, t.date.day),
+          },
+        ),
+      ),
+  ];
+});
 
 final friendsProvider = StreamProvider<List<Friend>>(
   (ref) => ref.watch(dbProvider).watchFriends(),

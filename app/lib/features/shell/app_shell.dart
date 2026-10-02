@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../domain/challenge_rule.dart';
 import '../../domain/gamification.dart';
 import '../../services/notification_service.dart';
 import '../../state/providers.dart';
@@ -52,6 +53,9 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
     // Al volver a la app (otro día) se anotan los hábitos que faltan.
     if (state == AppLifecycleState.resumed) _generateDue();
   }
+
+  // Retos que ya se están premiando (evita dar el XP dos veces mientras se guarda).
+  final _rewarding = <int>{};
 
   bool _addOpen = false;
 
@@ -110,6 +114,17 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
       final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
       final cur = ref.read(settingsProvider).value?.currency.code ?? 'PYG';
       ref.read(dbProvider).upsertNetSnapshot(month, nw.net.minor, cur);
+    });
+    // Entrega el XP de los retos que se cumplieron (una sola vez por reto).
+    ref.listen(challengeViewsProvider, (_, views) async {
+      final db = ref.read(dbProvider);
+      for (final v in views) {
+        if (v.progress.completed && !v.challenge.rewarded && _rewarding.add(v.challenge.id)) {
+          await db.markChallengeRewarded(v.challenge.id);
+          final xp = int.tryParse(await db.getSetting('xp') ?? '') ?? 0;
+          await db.setSetting('xp', '${xp + ChallengeRule.xpReward}');
+        }
+      }
     });
     final wide = MediaQuery.sizeOf(context).width >= 900;
     return wide ? _desktop(context) : _mobile(context);
