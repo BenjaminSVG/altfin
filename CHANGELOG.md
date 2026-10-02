@@ -2,6 +2,11 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto sigue [versionado semántico](https://semver.org/lang/es/).
 
+## [Sin publicar]
+
+### Agregado
+- **Fondo de emergencia** (Metas): calcula gasto esencial mensual × 3, 6 o 9 meses (regla 3-6-9) y crea o actualiza la meta con un toque. Referencia: calculadoras de fondo de emergencia y metas de YNAB/Monarch.
+
 ## [0.3.0] — 2026-10-01
 
 ### Agregado

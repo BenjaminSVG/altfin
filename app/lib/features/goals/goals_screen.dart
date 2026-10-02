@@ -13,6 +13,7 @@ import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/widgets.dart';
 import '../debts/debts_screen.dart';
 import '../grow/grow_screen.dart';
+import 'emergency_fund_screen.dart';
 
 const _goalIcons = [
   ('plane', 'b'),
@@ -69,6 +70,22 @@ class GoalsScreen extends ConsumerWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Deudas', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
               Text('Armá tu plan para salir de ellas: avalancha o bola de nieve.',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+          const Icon(Icons.chevron_right_rounded),
+        ]),
+      ),
+      const SizedBox(height: 12),
+      AltCard(
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EmergencyFundScreen())),
+        child: Row(children: [
+          const IconTile('lifebuoy', tone: 'b', size: 56),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Fondo de emergencia', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+              Text('Calculá cuánto guardar para imprevistos: 3, 6 o 9 meses de gastos.',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
             ]),
           ),

@@ -309,6 +309,9 @@ class AppDatabase extends _$AppDatabase {
         .write(GoalsCompanion(savedMinor: Value(g.savedMinor + amountMinor)));
   }
 
+  Future<void> setGoalTarget(int id, int targetMinor) =>
+      (update(goals)..where((t) => t.id.equals(id))).write(GoalsCompanion(targetMinor: Value(targetMinor)));
+
   // ---- Días ----
   Stream<List<DateTime>> watchLoggedDays() => customSelect(
         'SELECT date AS d FROM txns UNION SELECT day AS d FROM day_checks',

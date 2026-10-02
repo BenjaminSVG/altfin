@@ -213,6 +213,26 @@ void main() {
     await finish(t, db);
   });
 
+  testWidgets('fondo de emergencia: calcula y crea la meta', (t) async {
+    final db = await freshDb(onboarded: true);
+    await boot(t, db);
+    await t.tap(find.text('Metas'));
+    await t.pump(const Duration(milliseconds: 600));
+    await tapText(t, 'Fondo de emergencia');
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    await t.enterText(find.byType(TextField).first, '2000000');
+    await t.pump();
+    await tapText(t, '6 meses');
+    expect(find.textContaining('12.000.000'), findsOneWidget);
+    await shot(t, '25-fondo-emergencia');
+    await tapText(t, 'CREAR META');
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    final goals = await t.runAsync(() => db.select(db.goals).get());
+    expect(goals!.single.name, 'Fondo de emergencia');
+    expect(goals.single.targetMinor, 12000000);
+    await finish(t, db);
+  });
+
   testWidgets('en Ajustes se puede quitar el sueldo y el porcentaje', (t) async {
     final db = await freshDb(onboarded: true);
     await boot(t, db);
