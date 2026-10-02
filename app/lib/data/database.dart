@@ -118,6 +118,23 @@ class NetSnapshots extends Table {
   Set<Column> get primaryKey => {month};
 }
 
+/// Amigos con los que se comparten gastos.
+class Friends extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+}
+
+/// Movimiento de deuda con un amigo. [amountMinor] > 0: el amigo te debe
+/// (pagaste vos); < 0: le debés (pagó él/ella o le diste algo).
+class ShareEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get friendId => integer().references(Friends, #id)();
+  IntColumn get amountMinor => integer()();
+  TextColumn get currency => text()();
+  TextColumn get note => text().withDefault(const Constant(''))();
+  DateTimeColumn get date => dateTime()();
+}
+
 /// Días en que el usuario confirmó "hoy no gasté" (cuentan para la racha).
 class DayChecks extends Table {
   DateTimeColumn get day => dateTime()();
@@ -135,13 +152,13 @@ class Settings extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings, Debts, Habits, Holdings, NetSnapshots])
+@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings, Debts, Habits, Holdings, NetSnapshots, Friends, ShareEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
       : super(executor ?? driftDatabase(name: 'altfin'));
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -157,8 +174,28 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(holdings);
             await m.createTable(netSnapshots);
           }
+          if (from < 6) {
+            await m.createTable(friends);
+            await m.createTable(shareEntries);
+          }
         },
       );
+
+  // ---- Gastos compartidos ----
+  Stream<List<Friend>> watchFriends() => select(friends).watch();
+
+  Stream<List<ShareEntry>> watchShareEntries() =>
+      (select(shareEntries)..orderBy([(t) => OrderingTerm.desc(t.date), (t) => OrderingTerm.desc(t.id)])).watch();
+
+  Future<int> addFriend(String name) => into(friends).insert(FriendsCompanion.insert(name: name));
+
+  /// Borra al amigo y su historial.
+  Future<void> deleteFriend(int id) => transaction(() async {
+        await (delete(shareEntries)..where((t) => t.friendId.equals(id))).go();
+        await (delete(friends)..where((t) => t.id.equals(id))).go();
+      });
+
+  Future<int> addShareEntry(ShareEntriesCompanion e) => into(shareEntries).insert(e);
 
   // ---- Patrimonio neto ----
   Stream<List<Holding>> watchHoldings() => select(holdings).watch();

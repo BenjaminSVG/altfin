@@ -14,6 +14,7 @@ import '../../ui/widgets/widgets.dart';
 import '../debts/debts_screen.dart';
 import '../grow/grow_screen.dart';
 import '../networth/net_worth_screen.dart';
+import '../shared/shared_screen.dart';
 import 'emergency_fund_screen.dart';
 
 const _goalIcons = [
@@ -87,6 +88,22 @@ class GoalsScreen extends ConsumerWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Patrimonio neto', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
               Text('Lo que tenés menos lo que debés, mes a mes.',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+          const Icon(Icons.chevron_right_rounded),
+        ]),
+      ),
+      const SizedBox(height: 12),
+      AltCard(
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SharedScreen())),
+        child: Row(children: [
+          const IconTile('exchange', tone: 'o', size: 56),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Gastos compartidos', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+              Text('Dividí cuentas con amigos y mirá quién le debe a quién.',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
             ]),
           ),

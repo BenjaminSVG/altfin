@@ -4116,6 +4116,594 @@ class NetSnapshotsCompanion extends UpdateCompanion<NetSnapshot> {
   }
 }
 
+class $FriendsTable extends Friends with TableInfo<$FriendsTable, Friend> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FriendsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'friends';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Friend> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Friend map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Friend(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+    );
+  }
+
+  @override
+  $FriendsTable createAlias(String alias) {
+    return $FriendsTable(attachedDatabase, alias);
+  }
+}
+
+class Friend extends DataClass implements Insertable<Friend> {
+  final int id;
+  final String name;
+  const Friend({required this.id, required this.name});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    return map;
+  }
+
+  FriendsCompanion toCompanion(bool nullToAbsent) {
+    return FriendsCompanion(id: Value(id), name: Value(name));
+  }
+
+  factory Friend.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Friend(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+    };
+  }
+
+  Friend copyWith({int? id, String? name}) =>
+      Friend(id: id ?? this.id, name: name ?? this.name);
+  Friend copyWithCompanion(FriendsCompanion data) {
+    return Friend(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Friend(')
+          ..write('id: $id, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Friend && other.id == this.id && other.name == this.name);
+}
+
+class FriendsCompanion extends UpdateCompanion<Friend> {
+  final Value<int> id;
+  final Value<String> name;
+  const FriendsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+  });
+  FriendsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+  }) : name = Value(name);
+  static Insertable<Friend> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+    });
+  }
+
+  FriendsCompanion copyWith({Value<int>? id, Value<String>? name}) {
+    return FriendsCompanion(id: id ?? this.id, name: name ?? this.name);
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FriendsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ShareEntriesTable extends ShareEntries
+    with TableInfo<$ShareEntriesTable, ShareEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ShareEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _friendIdMeta = const VerificationMeta(
+    'friendId',
+  );
+  @override
+  late final GeneratedColumn<int> friendId = GeneratedColumn<int>(
+    'friend_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES friends (id)',
+    ),
+  );
+  static const VerificationMeta _amountMinorMeta = const VerificationMeta(
+    'amountMinor',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinor = GeneratedColumn<int>(
+    'amount_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    friendId,
+    amountMinor,
+    currency,
+    note,
+    date,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'share_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ShareEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('friend_id')) {
+      context.handle(
+        _friendIdMeta,
+        friendId.isAcceptableOrUnknown(data['friend_id']!, _friendIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_friendIdMeta);
+    }
+    if (data.containsKey('amount_minor')) {
+      context.handle(
+        _amountMinorMeta,
+        amountMinor.isAcceptableOrUnknown(
+          data['amount_minor']!,
+          _amountMinorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMinorMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ShareEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ShareEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      friendId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}friend_id'],
+      )!,
+      amountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+    );
+  }
+
+  @override
+  $ShareEntriesTable createAlias(String alias) {
+    return $ShareEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class ShareEntry extends DataClass implements Insertable<ShareEntry> {
+  final int id;
+  final int friendId;
+  final int amountMinor;
+  final String currency;
+  final String note;
+  final DateTime date;
+  const ShareEntry({
+    required this.id,
+    required this.friendId,
+    required this.amountMinor,
+    required this.currency,
+    required this.note,
+    required this.date,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['friend_id'] = Variable<int>(friendId);
+    map['amount_minor'] = Variable<int>(amountMinor);
+    map['currency'] = Variable<String>(currency);
+    map['note'] = Variable<String>(note);
+    map['date'] = Variable<DateTime>(date);
+    return map;
+  }
+
+  ShareEntriesCompanion toCompanion(bool nullToAbsent) {
+    return ShareEntriesCompanion(
+      id: Value(id),
+      friendId: Value(friendId),
+      amountMinor: Value(amountMinor),
+      currency: Value(currency),
+      note: Value(note),
+      date: Value(date),
+    );
+  }
+
+  factory ShareEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ShareEntry(
+      id: serializer.fromJson<int>(json['id']),
+      friendId: serializer.fromJson<int>(json['friendId']),
+      amountMinor: serializer.fromJson<int>(json['amountMinor']),
+      currency: serializer.fromJson<String>(json['currency']),
+      note: serializer.fromJson<String>(json['note']),
+      date: serializer.fromJson<DateTime>(json['date']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'friendId': serializer.toJson<int>(friendId),
+      'amountMinor': serializer.toJson<int>(amountMinor),
+      'currency': serializer.toJson<String>(currency),
+      'note': serializer.toJson<String>(note),
+      'date': serializer.toJson<DateTime>(date),
+    };
+  }
+
+  ShareEntry copyWith({
+    int? id,
+    int? friendId,
+    int? amountMinor,
+    String? currency,
+    String? note,
+    DateTime? date,
+  }) => ShareEntry(
+    id: id ?? this.id,
+    friendId: friendId ?? this.friendId,
+    amountMinor: amountMinor ?? this.amountMinor,
+    currency: currency ?? this.currency,
+    note: note ?? this.note,
+    date: date ?? this.date,
+  );
+  ShareEntry copyWithCompanion(ShareEntriesCompanion data) {
+    return ShareEntry(
+      id: data.id.present ? data.id.value : this.id,
+      friendId: data.friendId.present ? data.friendId.value : this.friendId,
+      amountMinor: data.amountMinor.present
+          ? data.amountMinor.value
+          : this.amountMinor,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      note: data.note.present ? data.note.value : this.note,
+      date: data.date.present ? data.date.value : this.date,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShareEntry(')
+          ..write('id: $id, ')
+          ..write('friendId: $friendId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('currency: $currency, ')
+          ..write('note: $note, ')
+          ..write('date: $date')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, friendId, amountMinor, currency, note, date);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ShareEntry &&
+          other.id == this.id &&
+          other.friendId == this.friendId &&
+          other.amountMinor == this.amountMinor &&
+          other.currency == this.currency &&
+          other.note == this.note &&
+          other.date == this.date);
+}
+
+class ShareEntriesCompanion extends UpdateCompanion<ShareEntry> {
+  final Value<int> id;
+  final Value<int> friendId;
+  final Value<int> amountMinor;
+  final Value<String> currency;
+  final Value<String> note;
+  final Value<DateTime> date;
+  const ShareEntriesCompanion({
+    this.id = const Value.absent(),
+    this.friendId = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.note = const Value.absent(),
+    this.date = const Value.absent(),
+  });
+  ShareEntriesCompanion.insert({
+    this.id = const Value.absent(),
+    required int friendId,
+    required int amountMinor,
+    required String currency,
+    this.note = const Value.absent(),
+    required DateTime date,
+  }) : friendId = Value(friendId),
+       amountMinor = Value(amountMinor),
+       currency = Value(currency),
+       date = Value(date);
+  static Insertable<ShareEntry> custom({
+    Expression<int>? id,
+    Expression<int>? friendId,
+    Expression<int>? amountMinor,
+    Expression<String>? currency,
+    Expression<String>? note,
+    Expression<DateTime>? date,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (friendId != null) 'friend_id': friendId,
+      if (amountMinor != null) 'amount_minor': amountMinor,
+      if (currency != null) 'currency': currency,
+      if (note != null) 'note': note,
+      if (date != null) 'date': date,
+    });
+  }
+
+  ShareEntriesCompanion copyWith({
+    Value<int>? id,
+    Value<int>? friendId,
+    Value<int>? amountMinor,
+    Value<String>? currency,
+    Value<String>? note,
+    Value<DateTime>? date,
+  }) {
+    return ShareEntriesCompanion(
+      id: id ?? this.id,
+      friendId: friendId ?? this.friendId,
+      amountMinor: amountMinor ?? this.amountMinor,
+      currency: currency ?? this.currency,
+      note: note ?? this.note,
+      date: date ?? this.date,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (friendId.present) {
+      map['friend_id'] = Variable<int>(friendId.value);
+    }
+    if (amountMinor.present) {
+      map['amount_minor'] = Variable<int>(amountMinor.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShareEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('friendId: $friendId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('currency: $currency, ')
+          ..write('note: $note, ')
+          ..write('date: $date')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4129,6 +4717,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $HabitsTable habits = $HabitsTable(this);
   late final $HoldingsTable holdings = $HoldingsTable(this);
   late final $NetSnapshotsTable netSnapshots = $NetSnapshotsTable(this);
+  late final $FriendsTable friends = $FriendsTable(this);
+  late final $ShareEntriesTable shareEntries = $ShareEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4144,6 +4734,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     habits,
     holdings,
     netSnapshots,
+    friends,
+    shareEntries,
   ];
 }
 
@@ -6968,6 +7560,563 @@ typedef $$NetSnapshotsTableProcessedTableManager =
       NetSnapshot,
       PrefetchHooks Function()
     >;
+typedef $$FriendsTableCreateCompanionBuilder = FriendsCompanion Function({
+  Value<int> id,
+  required String name,
+});
+typedef $$FriendsTableUpdateCompanionBuilder = FriendsCompanion Function({
+  Value<int> id,
+  Value<String> name,
+});
+
+final class $$FriendsTableReferences
+    extends BaseReferences<_$AppDatabase, $FriendsTable, Friend> {
+  $$FriendsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ShareEntriesTable, List<ShareEntry>>
+  _shareEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.shareEntries,
+    aliasName: 'friends__id__share_entries__friend_id',
+  );
+
+  $$ShareEntriesTableProcessedTableManager get shareEntriesRefs {
+    final manager = $$ShareEntriesTableTableManager(
+      $_db,
+      $_db.shareEntries,
+    ).filter((f) => f.friendId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_shareEntriesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$FriendsTableFilterComposer
+    extends Composer<_$AppDatabase, $FriendsTable> {
+  $$FriendsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> shareEntriesRefs(
+    Expression<bool> Function($$ShareEntriesTableFilterComposer f) f,
+  ) {
+    final $$ShareEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.shareEntries,
+      getReferencedColumn: (t) => t.friendId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ShareEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.shareEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$FriendsTableOrderingComposer
+    extends Composer<_$AppDatabase, $FriendsTable> {
+  $$FriendsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FriendsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FriendsTable> {
+  $$FriendsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  Expression<T> shareEntriesRefs<T extends Object>(
+    Expression<T> Function($$ShareEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$ShareEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.shareEntries,
+      getReferencedColumn: (t) => t.friendId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ShareEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.shareEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$FriendsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FriendsTable,
+          Friend,
+          $$FriendsTableFilterComposer,
+          $$FriendsTableOrderingComposer,
+          $$FriendsTableAnnotationComposer,
+          $$FriendsTableCreateCompanionBuilder,
+          $$FriendsTableUpdateCompanionBuilder,
+          (Friend, $$FriendsTableReferences),
+          Friend,
+          PrefetchHooks Function({bool shareEntriesRefs})
+        > {
+  $$FriendsTableTableManager(_$AppDatabase db, $FriendsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FriendsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FriendsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FriendsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+          }) => FriendsCompanion(id: id, name: name),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+          }) => FriendsCompanion.insert(id: id, name: name),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$FriendsTable, Friend>(table),
+                  $$FriendsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({shareEntriesRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (shareEntriesRefs) db.shareEntries],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (shareEntriesRefs)
+                    await $_getPrefetchedData<
+                      Friend,
+                      $FriendsTable,
+                      ShareEntry
+                    >(
+                      currentTable: table,
+                      referencedTable: $$FriendsTableReferences
+                          ._shareEntriesRefsTable(db),
+                      managerFromTypedResult: (p0) => $$FriendsTableReferences(
+                        db,
+                        table,
+                        p0,
+                      ).shareEntriesRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.friendId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$FriendsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FriendsTable,
+      Friend,
+      $$FriendsTableFilterComposer,
+      $$FriendsTableOrderingComposer,
+      $$FriendsTableAnnotationComposer,
+      $$FriendsTableCreateCompanionBuilder,
+      $$FriendsTableUpdateCompanionBuilder,
+      (Friend, $$FriendsTableReferences),
+      Friend,
+      PrefetchHooks Function({bool shareEntriesRefs})
+    >;
+typedef $$ShareEntriesTableCreateCompanionBuilder =
+    ShareEntriesCompanion Function({
+      Value<int> id,
+      required int friendId,
+      required int amountMinor,
+      required String currency,
+      Value<String> note,
+      required DateTime date,
+    });
+typedef $$ShareEntriesTableUpdateCompanionBuilder =
+    ShareEntriesCompanion Function({
+      Value<int> id,
+      Value<int> friendId,
+      Value<int> amountMinor,
+      Value<String> currency,
+      Value<String> note,
+      Value<DateTime> date,
+    });
+
+final class $$ShareEntriesTableReferences
+    extends BaseReferences<_$AppDatabase, $ShareEntriesTable, ShareEntry> {
+  $$ShareEntriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $FriendsTable _friendIdTable(_$AppDatabase db) =>
+      db.friends.createAlias('share_entries__friend_id__friends__id');
+
+  $$FriendsTableProcessedTableManager get friendId {
+    final $_column = $_itemColumn<int>('friend_id')!;
+
+    final manager = $$FriendsTableTableManager(
+      $_db,
+      $_db.friends,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_friendIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ShareEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $ShareEntriesTable> {
+  $$ShareEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$FriendsTableFilterComposer get friendId {
+    final $$FriendsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.friendId,
+      referencedTable: $db.friends,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FriendsTableFilterComposer(
+            $db: $db,
+            $table: $db.friends,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ShareEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ShareEntriesTable> {
+  $$ShareEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$FriendsTableOrderingComposer get friendId {
+    final $$FriendsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.friendId,
+      referencedTable: $db.friends,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FriendsTableOrderingComposer(
+            $db: $db,
+            $table: $db.friends,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ShareEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ShareEntriesTable> {
+  $$ShareEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  $$FriendsTableAnnotationComposer get friendId {
+    final $$FriendsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.friendId,
+      referencedTable: $db.friends,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FriendsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.friends,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ShareEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ShareEntriesTable,
+          ShareEntry,
+          $$ShareEntriesTableFilterComposer,
+          $$ShareEntriesTableOrderingComposer,
+          $$ShareEntriesTableAnnotationComposer,
+          $$ShareEntriesTableCreateCompanionBuilder,
+          $$ShareEntriesTableUpdateCompanionBuilder,
+          (ShareEntry, $$ShareEntriesTableReferences),
+          ShareEntry,
+          PrefetchHooks Function({bool friendId})
+        > {
+  $$ShareEntriesTableTableManager(_$AppDatabase db, $ShareEntriesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ShareEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ShareEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ShareEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> friendId = const Value.absent(),
+                Value<int> amountMinor = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<String> note = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+              }) => ShareEntriesCompanion(
+                id: id,
+                friendId: friendId,
+                amountMinor: amountMinor,
+                currency: currency,
+                note: note,
+                date: date,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int friendId,
+                required int amountMinor,
+                required String currency,
+                Value<String> note = const Value.absent(),
+                required DateTime date,
+              }) => ShareEntriesCompanion.insert(
+                id: id,
+                friendId: friendId,
+                amountMinor: amountMinor,
+                currency: currency,
+                note: note,
+                date: date,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ShareEntriesTable, ShareEntry>(table),
+                  $$ShareEntriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({friendId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (friendId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.friendId,
+                        referencedTable: $$ShareEntriesTableReferences
+                            ._friendIdTable(db),
+                        referencedColumn: $$ShareEntriesTableReferences
+                            ._friendIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ShareEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ShareEntriesTable,
+      ShareEntry,
+      $$ShareEntriesTableFilterComposer,
+      $$ShareEntriesTableOrderingComposer,
+      $$ShareEntriesTableAnnotationComposer,
+      $$ShareEntriesTableCreateCompanionBuilder,
+      $$ShareEntriesTableUpdateCompanionBuilder,
+      (ShareEntry, $$ShareEntriesTableReferences),
+      ShareEntry,
+      PrefetchHooks Function({bool friendId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6991,4 +8140,8 @@ class $AppDatabaseManager {
       $$HoldingsTableTableManager(_db, _db.holdings);
   $$NetSnapshotsTableTableManager get netSnapshots =>
       $$NetSnapshotsTableTableManager(_db, _db.netSnapshots);
+  $$FriendsTableTableManager get friends =>
+      $$FriendsTableTableManager(_db, _db.friends);
+  $$ShareEntriesTableTableManager get shareEntries =>
+      $$ShareEntriesTableTableManager(_db, _db.shareEntries);
 }

@@ -263,6 +263,34 @@ void main() {
     await finish(t, db);
   });
 
+  testWidgets('gastos compartidos: pago yo, divido entre 2 amigos y anota mi parte', (t) async {
+    final db = await freshDb(onboarded: true);
+    final ana = await t.runAsync(() => db.addFriend('Ana'));
+    final leo = await t.runAsync(() => db.addFriend('Leo'));
+    await boot(t, db);
+    await t.tap(find.text('Metas'));
+    await t.pump(const Duration(milliseconds: 600));
+    await tapText(t, 'Gastos compartidos');
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    await t.tap(find.text('DIVIDIR GASTO'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    await t.enterText(find.byType(TextField).at(0), 'Cena');
+    await t.enterText(find.byType(TextField).at(1), '90000');
+    await t.pump();
+    expect(find.text('Cada uno: ₲ 30.000'), findsOneWidget);
+    await shot(t, '27-gastos-compartidos');
+    await t.tap(find.text('Guardar'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    final entries = await t.runAsync(() => db.select(db.shareEntries).get());
+    expect(entries!.length, 2);
+    expect(entries.map((e) => e.friendId).toSet(), {ana, leo});
+    expect(entries.every((e) => e.amountMinor == 30000), isTrue);
+    final txs = await t.runAsync(() => db.allTxns());
+    expect(txs!.single.amountMinor, 30000);
+    expect(find.textContaining('Ana te debe ₲ 30.000'), findsOneWidget);
+    await finish(t, db);
+  });
+
   testWidgets('en Ajustes se puede quitar el sueldo y el porcentaje', (t) async {
     final db = await freshDb(onboarded: true);
     await boot(t, db);

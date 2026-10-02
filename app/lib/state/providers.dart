@@ -236,6 +236,14 @@ final debtsProvider = StreamProvider<List<Debt>>(
   (ref) => ref.watch(dbProvider).watchDebts(),
 );
 
+final friendsProvider = StreamProvider<List<Friend>>(
+  (ref) => ref.watch(dbProvider).watchFriends(),
+);
+
+final shareEntriesProvider = StreamProvider<List<ShareEntry>>(
+  (ref) => ref.watch(dbProvider).watchShareEntries(),
+);
+
 final holdingsProvider = StreamProvider<List<Holding>>(
   (ref) => ref.watch(dbProvider).watchHoldings(),
 );
