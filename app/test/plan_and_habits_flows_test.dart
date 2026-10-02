@@ -233,6 +233,36 @@ void main() {
     await finish(t, db);
   });
 
+  testWidgets('patrimonio neto: cargar un activo y una deuda', (t) async {
+    final db = await freshDb(onboarded: true);
+    await boot(t, db);
+    await t.tap(find.text('Metas'));
+    await t.pump(const Duration(milliseconds: 600));
+    await tapText(t, 'Patrimonio neto');
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    for (final row in [(false, 'Cuenta', '5000000'), (true, 'Préstamo', '1500000')]) {
+      await t.tap(find.text('AGREGAR'));
+      await t.pumpAndSettle(const Duration(milliseconds: 100));
+      if (row.$1 == false) {
+        // por defecto es "Tengo"
+      } else {
+        await t.tap(find.text('Debo'));
+        await t.pump();
+      }
+      await t.enterText(find.byType(TextField).at(0), row.$2);
+      await t.enterText(find.byType(TextField).at(1), row.$3);
+      await t.pump();
+      await t.tap(find.text('Guardar'));
+      await t.pumpAndSettle(const Duration(milliseconds: 100));
+    }
+    expect(find.text('₲ 3.500.000'), findsOneWidget);
+    await shot(t, '26-patrimonio');
+    final snaps = await t.runAsync(() => db.select(db.netSnapshots).get());
+    expect(snaps!.single.month, '2026-10');
+    expect(snaps.single.netMinor, 3500000);
+    await finish(t, db);
+  });
+
   testWidgets('en Ajustes se puede quitar el sueldo y el porcentaje', (t) async {
     final db = await freshDb(onboarded: true);
     await boot(t, db);

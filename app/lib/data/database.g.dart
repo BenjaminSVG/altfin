@@ -3445,6 +3445,677 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   }
 }
 
+class $HoldingsTable extends Holdings with TableInfo<$HoldingsTable, Holding> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HoldingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
+  @override
+  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
+    'icon',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('coin'),
+  );
+  static const VerificationMeta _isLiabilityMeta = const VerificationMeta(
+    'isLiability',
+  );
+  @override
+  late final GeneratedColumn<bool> isLiability = GeneratedColumn<bool>(
+    'is_liability',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_liability" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _amountMinorMeta = const VerificationMeta(
+    'amountMinor',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinor = GeneratedColumn<int>(
+    'amount_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    icon,
+    isLiability,
+    amountMinor,
+    currency,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'holdings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Holding> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('icon')) {
+      context.handle(
+        _iconMeta,
+        icon.isAcceptableOrUnknown(data['icon']!, _iconMeta),
+      );
+    }
+    if (data.containsKey('is_liability')) {
+      context.handle(
+        _isLiabilityMeta,
+        isLiability.isAcceptableOrUnknown(
+          data['is_liability']!,
+          _isLiabilityMeta,
+        ),
+      );
+    }
+    if (data.containsKey('amount_minor')) {
+      context.handle(
+        _amountMinorMeta,
+        amountMinor.isAcceptableOrUnknown(
+          data['amount_minor']!,
+          _amountMinorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMinorMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Holding map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Holding(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      icon: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}icon'],
+      )!,
+      isLiability: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_liability'],
+      )!,
+      amountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+    );
+  }
+
+  @override
+  $HoldingsTable createAlias(String alias) {
+    return $HoldingsTable(attachedDatabase, alias);
+  }
+}
+
+class Holding extends DataClass implements Insertable<Holding> {
+  final int id;
+  final String name;
+  final String icon;
+
+  /// true = deuda (resta), false = activo (suma).
+  final bool isLiability;
+  final int amountMinor;
+  final String currency;
+  const Holding({
+    required this.id,
+    required this.name,
+    required this.icon,
+    required this.isLiability,
+    required this.amountMinor,
+    required this.currency,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['icon'] = Variable<String>(icon);
+    map['is_liability'] = Variable<bool>(isLiability);
+    map['amount_minor'] = Variable<int>(amountMinor);
+    map['currency'] = Variable<String>(currency);
+    return map;
+  }
+
+  HoldingsCompanion toCompanion(bool nullToAbsent) {
+    return HoldingsCompanion(
+      id: Value(id),
+      name: Value(name),
+      icon: Value(icon),
+      isLiability: Value(isLiability),
+      amountMinor: Value(amountMinor),
+      currency: Value(currency),
+    );
+  }
+
+  factory Holding.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Holding(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      icon: serializer.fromJson<String>(json['icon']),
+      isLiability: serializer.fromJson<bool>(json['isLiability']),
+      amountMinor: serializer.fromJson<int>(json['amountMinor']),
+      currency: serializer.fromJson<String>(json['currency']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'icon': serializer.toJson<String>(icon),
+      'isLiability': serializer.toJson<bool>(isLiability),
+      'amountMinor': serializer.toJson<int>(amountMinor),
+      'currency': serializer.toJson<String>(currency),
+    };
+  }
+
+  Holding copyWith({
+    int? id,
+    String? name,
+    String? icon,
+    bool? isLiability,
+    int? amountMinor,
+    String? currency,
+  }) => Holding(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    icon: icon ?? this.icon,
+    isLiability: isLiability ?? this.isLiability,
+    amountMinor: amountMinor ?? this.amountMinor,
+    currency: currency ?? this.currency,
+  );
+  Holding copyWithCompanion(HoldingsCompanion data) {
+    return Holding(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      icon: data.icon.present ? data.icon.value : this.icon,
+      isLiability: data.isLiability.present
+          ? data.isLiability.value
+          : this.isLiability,
+      amountMinor: data.amountMinor.present
+          ? data.amountMinor.value
+          : this.amountMinor,
+      currency: data.currency.present ? data.currency.value : this.currency,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Holding(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('icon: $icon, ')
+          ..write('isLiability: $isLiability, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('currency: $currency')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, icon, isLiability, amountMinor, currency);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Holding &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.icon == this.icon &&
+          other.isLiability == this.isLiability &&
+          other.amountMinor == this.amountMinor &&
+          other.currency == this.currency);
+}
+
+class HoldingsCompanion extends UpdateCompanion<Holding> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> icon;
+  final Value<bool> isLiability;
+  final Value<int> amountMinor;
+  final Value<String> currency;
+  const HoldingsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.icon = const Value.absent(),
+    this.isLiability = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.currency = const Value.absent(),
+  });
+  HoldingsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.icon = const Value.absent(),
+    this.isLiability = const Value.absent(),
+    required int amountMinor,
+    required String currency,
+  }) : name = Value(name),
+       amountMinor = Value(amountMinor),
+       currency = Value(currency);
+  static Insertable<Holding> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? icon,
+    Expression<bool>? isLiability,
+    Expression<int>? amountMinor,
+    Expression<String>? currency,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (icon != null) 'icon': icon,
+      if (isLiability != null) 'is_liability': isLiability,
+      if (amountMinor != null) 'amount_minor': amountMinor,
+      if (currency != null) 'currency': currency,
+    });
+  }
+
+  HoldingsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? icon,
+    Value<bool>? isLiability,
+    Value<int>? amountMinor,
+    Value<String>? currency,
+  }) {
+    return HoldingsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+      isLiability: isLiability ?? this.isLiability,
+      amountMinor: amountMinor ?? this.amountMinor,
+      currency: currency ?? this.currency,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (icon.present) {
+      map['icon'] = Variable<String>(icon.value);
+    }
+    if (isLiability.present) {
+      map['is_liability'] = Variable<bool>(isLiability.value);
+    }
+    if (amountMinor.present) {
+      map['amount_minor'] = Variable<int>(amountMinor.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HoldingsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('icon: $icon, ')
+          ..write('isLiability: $isLiability, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('currency: $currency')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NetSnapshotsTable extends NetSnapshots
+    with TableInfo<$NetSnapshotsTable, NetSnapshot> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NetSnapshotsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _monthMeta = const VerificationMeta('month');
+  @override
+  late final GeneratedColumn<String> month = GeneratedColumn<String>(
+    'month',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _netMinorMeta = const VerificationMeta(
+    'netMinor',
+  );
+  @override
+  late final GeneratedColumn<int> netMinor = GeneratedColumn<int>(
+    'net_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [month, netMinor, currency];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'net_snapshots';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<NetSnapshot> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('month')) {
+      context.handle(
+        _monthMeta,
+        month.isAcceptableOrUnknown(data['month']!, _monthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_monthMeta);
+    }
+    if (data.containsKey('net_minor')) {
+      context.handle(
+        _netMinorMeta,
+        netMinor.isAcceptableOrUnknown(data['net_minor']!, _netMinorMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_netMinorMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {month};
+  @override
+  NetSnapshot map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NetSnapshot(
+      month: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}month'],
+      )!,
+      netMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}net_minor'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+    );
+  }
+
+  @override
+  $NetSnapshotsTable createAlias(String alias) {
+    return $NetSnapshotsTable(attachedDatabase, alias);
+  }
+}
+
+class NetSnapshot extends DataClass implements Insertable<NetSnapshot> {
+  /// "2026-10".
+  final String month;
+  final int netMinor;
+  final String currency;
+  const NetSnapshot({
+    required this.month,
+    required this.netMinor,
+    required this.currency,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['month'] = Variable<String>(month);
+    map['net_minor'] = Variable<int>(netMinor);
+    map['currency'] = Variable<String>(currency);
+    return map;
+  }
+
+  NetSnapshotsCompanion toCompanion(bool nullToAbsent) {
+    return NetSnapshotsCompanion(
+      month: Value(month),
+      netMinor: Value(netMinor),
+      currency: Value(currency),
+    );
+  }
+
+  factory NetSnapshot.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NetSnapshot(
+      month: serializer.fromJson<String>(json['month']),
+      netMinor: serializer.fromJson<int>(json['netMinor']),
+      currency: serializer.fromJson<String>(json['currency']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'month': serializer.toJson<String>(month),
+      'netMinor': serializer.toJson<int>(netMinor),
+      'currency': serializer.toJson<String>(currency),
+    };
+  }
+
+  NetSnapshot copyWith({String? month, int? netMinor, String? currency}) =>
+      NetSnapshot(
+        month: month ?? this.month,
+        netMinor: netMinor ?? this.netMinor,
+        currency: currency ?? this.currency,
+      );
+  NetSnapshot copyWithCompanion(NetSnapshotsCompanion data) {
+    return NetSnapshot(
+      month: data.month.present ? data.month.value : this.month,
+      netMinor: data.netMinor.present ? data.netMinor.value : this.netMinor,
+      currency: data.currency.present ? data.currency.value : this.currency,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NetSnapshot(')
+          ..write('month: $month, ')
+          ..write('netMinor: $netMinor, ')
+          ..write('currency: $currency')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(month, netMinor, currency);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NetSnapshot &&
+          other.month == this.month &&
+          other.netMinor == this.netMinor &&
+          other.currency == this.currency);
+}
+
+class NetSnapshotsCompanion extends UpdateCompanion<NetSnapshot> {
+  final Value<String> month;
+  final Value<int> netMinor;
+  final Value<String> currency;
+  final Value<int> rowid;
+  const NetSnapshotsCompanion({
+    this.month = const Value.absent(),
+    this.netMinor = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NetSnapshotsCompanion.insert({
+    required String month,
+    required int netMinor,
+    required String currency,
+    this.rowid = const Value.absent(),
+  }) : month = Value(month),
+       netMinor = Value(netMinor),
+       currency = Value(currency);
+  static Insertable<NetSnapshot> custom({
+    Expression<String>? month,
+    Expression<int>? netMinor,
+    Expression<String>? currency,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (month != null) 'month': month,
+      if (netMinor != null) 'net_minor': netMinor,
+      if (currency != null) 'currency': currency,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NetSnapshotsCompanion copyWith({
+    Value<String>? month,
+    Value<int>? netMinor,
+    Value<String>? currency,
+    Value<int>? rowid,
+  }) {
+    return NetSnapshotsCompanion(
+      month: month ?? this.month,
+      netMinor: netMinor ?? this.netMinor,
+      currency: currency ?? this.currency,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (month.present) {
+      map['month'] = Variable<String>(month.value);
+    }
+    if (netMinor.present) {
+      map['net_minor'] = Variable<int>(netMinor.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NetSnapshotsCompanion(')
+          ..write('month: $month, ')
+          ..write('netMinor: $netMinor, ')
+          ..write('currency: $currency, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3456,6 +4127,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RecurringsTable recurrings = $RecurringsTable(this);
   late final $DebtsTable debts = $DebtsTable(this);
   late final $HabitsTable habits = $HabitsTable(this);
+  late final $HoldingsTable holdings = $HoldingsTable(this);
+  late final $NetSnapshotsTable netSnapshots = $NetSnapshotsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3469,6 +4142,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recurrings,
     debts,
     habits,
+    holdings,
+    netSnapshots,
   ];
 }
 
@@ -5904,6 +6579,395 @@ typedef $$HabitsTableProcessedTableManager =
       Habit,
       PrefetchHooks Function({bool categoryId})
     >;
+typedef $$HoldingsTableCreateCompanionBuilder = HoldingsCompanion Function({
+  Value<int> id,
+  required String name,
+  Value<String> icon,
+  Value<bool> isLiability,
+  required int amountMinor,
+  required String currency,
+});
+typedef $$HoldingsTableUpdateCompanionBuilder = HoldingsCompanion Function({
+  Value<int> id,
+  Value<String> name,
+  Value<String> icon,
+  Value<bool> isLiability,
+  Value<int> amountMinor,
+  Value<String> currency,
+});
+
+class $$HoldingsTableFilterComposer
+    extends Composer<_$AppDatabase, $HoldingsTable> {
+  $$HoldingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isLiability => $composableBuilder(
+    column: $table.isLiability,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$HoldingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $HoldingsTable> {
+  $$HoldingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isLiability => $composableBuilder(
+    column: $table.isLiability,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$HoldingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HoldingsTable> {
+  $$HoldingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get icon =>
+      $composableBuilder(column: $table.icon, builder: (column) => column);
+
+  GeneratedColumn<bool> get isLiability => $composableBuilder(
+    column: $table.isLiability,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+}
+
+class $$HoldingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $HoldingsTable,
+          Holding,
+          $$HoldingsTableFilterComposer,
+          $$HoldingsTableOrderingComposer,
+          $$HoldingsTableAnnotationComposer,
+          $$HoldingsTableCreateCompanionBuilder,
+          $$HoldingsTableUpdateCompanionBuilder,
+          (Holding, BaseReferences<_$AppDatabase, $HoldingsTable, Holding>),
+          Holding,
+          PrefetchHooks Function()
+        > {
+  $$HoldingsTableTableManager(_$AppDatabase db, $HoldingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$HoldingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$HoldingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$HoldingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> icon = const Value.absent(),
+                Value<bool> isLiability = const Value.absent(),
+                Value<int> amountMinor = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+              }) => HoldingsCompanion(
+                id: id,
+                name: name,
+                icon: icon,
+                isLiability: isLiability,
+                amountMinor: amountMinor,
+                currency: currency,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<String> icon = const Value.absent(),
+                Value<bool> isLiability = const Value.absent(),
+                required int amountMinor,
+                required String currency,
+              }) => HoldingsCompanion.insert(
+                id: id,
+                name: name,
+                icon: icon,
+                isLiability: isLiability,
+                amountMinor: amountMinor,
+                currency: currency,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$HoldingsTable, Holding>(table),
+                  BaseReferences<_$AppDatabase, $HoldingsTable, Holding>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$HoldingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $HoldingsTable,
+      Holding,
+      $$HoldingsTableFilterComposer,
+      $$HoldingsTableOrderingComposer,
+      $$HoldingsTableAnnotationComposer,
+      $$HoldingsTableCreateCompanionBuilder,
+      $$HoldingsTableUpdateCompanionBuilder,
+      (Holding, BaseReferences<_$AppDatabase, $HoldingsTable, Holding>),
+      Holding,
+      PrefetchHooks Function()
+    >;
+typedef $$NetSnapshotsTableCreateCompanionBuilder =
+    NetSnapshotsCompanion Function({
+      required String month,
+      required int netMinor,
+      required String currency,
+      Value<int> rowid,
+    });
+typedef $$NetSnapshotsTableUpdateCompanionBuilder =
+    NetSnapshotsCompanion Function({
+      Value<String> month,
+      Value<int> netMinor,
+      Value<String> currency,
+      Value<int> rowid,
+    });
+
+class $$NetSnapshotsTableFilterComposer
+    extends Composer<_$AppDatabase, $NetSnapshotsTable> {
+  $$NetSnapshotsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get netMinor => $composableBuilder(
+    column: $table.netMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NetSnapshotsTableOrderingComposer
+    extends Composer<_$AppDatabase, $NetSnapshotsTable> {
+  $$NetSnapshotsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get netMinor => $composableBuilder(
+    column: $table.netMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NetSnapshotsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NetSnapshotsTable> {
+  $$NetSnapshotsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get month =>
+      $composableBuilder(column: $table.month, builder: (column) => column);
+
+  GeneratedColumn<int> get netMinor =>
+      $composableBuilder(column: $table.netMinor, builder: (column) => column);
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+}
+
+class $$NetSnapshotsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NetSnapshotsTable,
+          NetSnapshot,
+          $$NetSnapshotsTableFilterComposer,
+          $$NetSnapshotsTableOrderingComposer,
+          $$NetSnapshotsTableAnnotationComposer,
+          $$NetSnapshotsTableCreateCompanionBuilder,
+          $$NetSnapshotsTableUpdateCompanionBuilder,
+          (
+            NetSnapshot,
+            BaseReferences<_$AppDatabase, $NetSnapshotsTable, NetSnapshot>,
+          ),
+          NetSnapshot,
+          PrefetchHooks Function()
+        > {
+  $$NetSnapshotsTableTableManager(_$AppDatabase db, $NetSnapshotsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NetSnapshotsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$NetSnapshotsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$NetSnapshotsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> month = const Value.absent(),
+                Value<int> netMinor = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NetSnapshotsCompanion(
+                month: month,
+                netMinor: netMinor,
+                currency: currency,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String month,
+                required int netMinor,
+                required String currency,
+                Value<int> rowid = const Value.absent(),
+              }) => NetSnapshotsCompanion.insert(
+                month: month,
+                netMinor: netMinor,
+                currency: currency,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$NetSnapshotsTable, NetSnapshot>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $NetSnapshotsTable,
+                    NetSnapshot
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NetSnapshotsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NetSnapshotsTable,
+      NetSnapshot,
+      $$NetSnapshotsTableFilterComposer,
+      $$NetSnapshotsTableOrderingComposer,
+      $$NetSnapshotsTableAnnotationComposer,
+      $$NetSnapshotsTableCreateCompanionBuilder,
+      $$NetSnapshotsTableUpdateCompanionBuilder,
+      (
+        NetSnapshot,
+        BaseReferences<_$AppDatabase, $NetSnapshotsTable, NetSnapshot>,
+      ),
+      NetSnapshot,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5923,4 +6987,8 @@ class $AppDatabaseManager {
       $$DebtsTableTableManager(_db, _db.debts);
   $$HabitsTableTableManager get habits =>
       $$HabitsTableTableManager(_db, _db.habits);
+  $$HoldingsTableTableManager get holdings =>
+      $$HoldingsTableTableManager(_db, _db.holdings);
+  $$NetSnapshotsTableTableManager get netSnapshots =>
+      $$NetSnapshotsTableTableManager(_db, _db.netSnapshots);
 }

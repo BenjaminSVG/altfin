@@ -95,6 +95,29 @@ class Debts extends Table {
   IntColumn get minPaymentMinor => integer()();
 }
 
+/// Activos y deudas cargados a mano para el patrimonio neto.
+class Holdings extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  TextColumn get icon => text().withDefault(const Constant('coin'))();
+
+  /// true = deuda (resta), false = activo (suma).
+  BoolColumn get isLiability => boolean().withDefault(const Constant(false))();
+  IntColumn get amountMinor => integer()();
+  TextColumn get currency => text()();
+}
+
+/// Patrimonio neto de cada mes (en la moneda principal), para ver la evolución.
+class NetSnapshots extends Table {
+  /// "2026-10".
+  TextColumn get month => text()();
+  IntColumn get netMinor => integer()();
+  TextColumn get currency => text()();
+
+  @override
+  Set<Column> get primaryKey => {month};
+}
+
 /// Días en que el usuario confirmó "hoy no gasté" (cuentan para la racha).
 class DayChecks extends Table {
   DateTimeColumn get day => dateTime()();
@@ -112,13 +135,13 @@ class Settings extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings, Debts, Habits])
+@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings, Debts, Habits, Holdings, NetSnapshots])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
       : super(executor ?? driftDatabase(name: 'altfin'));
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -130,8 +153,33 @@ class AppDatabase extends _$AppDatabase {
           if (from < 2) await m.createTable(recurrings);
           if (from < 3) await m.createTable(debts);
           if (from < 4) await m.createTable(habits);
+          if (from < 5) {
+            await m.createTable(holdings);
+            await m.createTable(netSnapshots);
+          }
         },
       );
+
+  // ---- Patrimonio neto ----
+  Stream<List<Holding>> watchHoldings() => select(holdings).watch();
+
+  Future<int> addHolding(HoldingsCompanion h) => into(holdings).insert(h);
+
+  Future<void> setHoldingAmount(int id, int amountMinor) =>
+      (update(holdings)..where((t) => t.id.equals(id))).write(HoldingsCompanion(amountMinor: Value(amountMinor)));
+
+  Future<void> deleteHolding(int id) => (delete(holdings)..where((t) => t.id.equals(id))).go();
+
+  Stream<List<NetSnapshot>> watchNetSnapshots() =>
+      (select(netSnapshots)..orderBy([(t) => OrderingTerm.asc(t.month)])).watch();
+
+  /// Guarda (o reemplaza) el patrimonio del mes. Solo escribe si cambió.
+  Future<void> upsertNetSnapshot(String month, int netMinor, String currency) async {
+    final cur = await (select(netSnapshots)..where((t) => t.month.equals(month))).getSingleOrNull();
+    if (cur != null && cur.netMinor == netMinor && cur.currency == currency) return;
+    await into(netSnapshots).insertOnConflictUpdate(
+        NetSnapshotsCompanion.insert(month: month, netMinor: netMinor, currency: currency));
+  }
 
   // ---- Hábitos de gasto (autobús, merienda...) ----
   Stream<List<Habit>> watchHabits() => select(habits).watch();

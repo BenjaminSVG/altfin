@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/database.dart';
 import '../domain/finance_engine.dart';
 import '../domain/fx.dart';
+import '../domain/net_worth.dart';
 import '../domain/gamification.dart';
 import '../domain/money.dart';
 
@@ -234,6 +235,33 @@ final recentTxnsProvider = StreamProvider<List<Txn>>((ref) {
 final debtsProvider = StreamProvider<List<Debt>>(
   (ref) => ref.watch(dbProvider).watchDebts(),
 );
+
+final holdingsProvider = StreamProvider<List<Holding>>(
+  (ref) => ref.watch(dbProvider).watchHoldings(),
+);
+
+final netSnapshotsProvider = StreamProvider<List<NetSnapshot>>(
+  (ref) => ref.watch(dbProvider).watchNetSnapshots(),
+);
+
+/// Patrimonio neto actual: activos cargados + plata en metas − deudas.
+final netWorthProvider = Provider<NetWorth?>((ref) {
+  final s = ref.watch(settingsProvider).value;
+  if (s == null) return null;
+  final holdings = ref.watch(holdingsProvider).value ?? const <Holding>[];
+  final goals = ref.watch(goalsProvider).value ?? const <Goal>[];
+  final debts = ref.watch(debtsProvider).value ?? const <Debt>[];
+  return NetWorth.compute(
+    items: [
+      for (final h in holdings)
+        NetItem(isLiability: h.isLiability, amount: Money(h.amountMinor, Currency.fromCode(h.currency))),
+    ],
+    goalsSaved: [for (final g in goals) Money(g.savedMinor, Currency.fromCode(g.currency))],
+    debts: [for (final d in debts) Money(d.balanceMinor, Currency.fromCode(d.currency))],
+    fx: s.fx,
+    cur: s.currency,
+  );
+});
 
 final habitsProvider = StreamProvider<List<Habit>>(
   (ref) => ref.watch(dbProvider).watchHabits(),

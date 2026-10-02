@@ -103,6 +103,14 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
         _reschedule();
       }
     });
+    // Guarda el patrimonio del mes cada vez que cambia (para ver su evolución).
+    ref.listen(netWorthProvider, (_, nw) {
+      if (nw == null) return;
+      final now = ref.read(clockProvider)();
+      final month = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+      final cur = ref.read(settingsProvider).value?.currency.code ?? 'PYG';
+      ref.read(dbProvider).upsertNetSnapshot(month, nw.net.minor, cur);
+    });
     final wide = MediaQuery.sizeOf(context).width >= 900;
     return wide ? _desktop(context) : _mobile(context);
   }
