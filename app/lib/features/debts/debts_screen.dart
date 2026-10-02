@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
@@ -9,6 +8,7 @@ import '../../domain/money.dart';
 import '../../state/providers.dart';
 import '../../ui/finn/finn.dart';
 import '../../ui/theme/app_theme.dart';
+import '../../ui/widgets/thousands_formatter.dart';
 import '../../ui/widgets/widgets.dart';
 import '../../util.dart';
 
@@ -184,7 +184,7 @@ class DebtsScreen extends ConsumerWidget {
             TextField(
               controller: balance,
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [ThousandsFormatter()],
               decoration: InputDecoration(prefixText: '${cur.symbol} ', hintText: 'Cuánto debés'),
             ),
             TextField(
@@ -195,7 +195,7 @@ class DebtsScreen extends ConsumerWidget {
             TextField(
               controller: min,
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [ThousandsFormatter()],
               decoration: InputDecoration(prefixText: '${cur.symbol} ', hintText: 'Pago mínimo por mes'),
             ),
           ]),
@@ -204,8 +204,8 @@ class DebtsScreen extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
           TextButton(
             onPressed: () async {
-              final b = int.tryParse(balance.text);
-              final m = int.tryParse(min.text);
+              final b = parseAmount(balance.text);
+              final m = parseAmount(min.text);
               final r = double.tryParse(rate.text.replaceAll(',', '.')) ?? 0;
               if (name.text.trim().isEmpty || b == null || b <= 0 || m == null || m <= 0 || r < 0) return;
               await ref.read(dbProvider).addDebt(DebtsCompanion.insert(
@@ -234,7 +234,7 @@ class DebtsScreen extends ConsumerWidget {
           controller: ctl,
           autofocus: true,
           keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          inputFormatters: [ThousandsFormatter()],
           decoration: InputDecoration(prefixText: '${cur.symbol} ', hintText: '0'),
         ),
         actions: [
@@ -244,7 +244,7 @@ class DebtsScreen extends ConsumerWidget {
       ),
     );
     if (res == null) return;
-    await ref.read(dbProvider).setSetting('debt_extra', '${(int.tryParse(res) ?? 0) * cur.factor}');
+    await ref.read(dbProvider).setSetting('debt_extra', '${(parseAmount(res) ?? 0) * cur.factor}');
   }
 
   Future<void> _actions(BuildContext context, WidgetRef ref, Debt d, Currency cur) async {
@@ -271,7 +271,7 @@ class DebtsScreen extends ConsumerWidget {
             controller: ctl,
             autofocus: true,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [ThousandsFormatter()],
             decoration: InputDecoration(prefixText: '${dc.symbol} '),
           ),
           actions: [
@@ -280,7 +280,7 @@ class DebtsScreen extends ConsumerWidget {
           ],
         ),
       );
-      final v = int.tryParse(res ?? '');
+      final v = parseAmount(res ?? '');
       if (v != null && v > 0) await ref.read(dbProvider).payDebt(d.id, v * dc.factor);
     }
   }

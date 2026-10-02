@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
@@ -9,6 +8,7 @@ import '../../domain/money.dart';
 import '../../state/providers.dart';
 import '../../ui/finn/finn.dart';
 import '../../ui/theme/app_theme.dart';
+import '../../ui/widgets/thousands_formatter.dart';
 import '../../ui/widgets/widgets.dart';
 
 /// Gastos que se repiten cada mes: alquiler, internet, Netflix...
@@ -107,7 +107,7 @@ class SubscriptionsScreen extends ConsumerWidget {
               TextField(
                 controller: amount,
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [ThousandsFormatter()],
                 decoration: InputDecoration(prefixText: '${cur.symbol} ', hintText: 'Monto'),
               ),
               const SizedBox(height: 12),
@@ -132,7 +132,7 @@ class SubscriptionsScreen extends ConsumerWidget {
             TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
             TextButton(
               onPressed: () async {
-                final v = int.tryParse(amount.text);
+                final v = parseAmount(amount.text);
                 if (name.text.trim().isEmpty || v == null || v <= 0) return;
                 final db = ref.read(dbProvider);
                 await db.addRecurring(RecurringsCompanion.insert(

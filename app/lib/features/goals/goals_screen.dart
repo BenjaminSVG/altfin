@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
@@ -10,6 +9,7 @@ import '../../domain/money.dart';
 import '../../state/providers.dart';
 import '../../ui/finn/finn.dart';
 import '../../ui/theme/app_theme.dart';
+import '../../ui/widgets/thousands_formatter.dart';
 import '../../ui/widgets/widgets.dart';
 import '../debts/debts_screen.dart';
 import '../grow/grow_screen.dart';
@@ -179,7 +179,7 @@ class GoalsScreen extends ConsumerWidget {
                     controller: ctl,
                     autofocus: true,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    inputFormatters: [ThousandsFormatter()],
                     decoration: InputDecoration(prefixText: '${cur.symbol} '),
                   ),
                   actions: [
@@ -188,7 +188,7 @@ class GoalsScreen extends ConsumerWidget {
                   ],
                 ),
               );
-              final v = int.tryParse(res ?? '');
+              final v = parseAmount(res ?? '');
               if (v != null && v > 0) await db.setGoalTarget(g.id, v * cur.factor);
             },
           ),
@@ -215,7 +215,7 @@ class GoalsScreen extends ConsumerWidget {
           controller: ctl,
           autofocus: true,
           keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          inputFormatters: [ThousandsFormatter()],
           decoration: InputDecoration(prefixText: '${cur.symbol} '),
         ),
         actions: [
@@ -224,7 +224,7 @@ class GoalsScreen extends ConsumerWidget {
         ],
       ),
     );
-    final v = int.tryParse(res ?? '');
+    final v = parseAmount(res ?? '');
     if (v == null || v <= 0) return;
     final db = ref.read(dbProvider);
     await db.addToGoal(g.id, v * cur.factor);
@@ -251,7 +251,7 @@ class GoalsScreen extends ConsumerWidget {
             TextField(
               controller: amount,
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [ThousandsFormatter()],
               decoration: InputDecoration(prefixText: '${cur.symbol} ', hintText: 'Cuánto necesitás'),
             ),
             const SizedBox(height: 10),
@@ -280,7 +280,7 @@ class GoalsScreen extends ConsumerWidget {
             TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
             TextButton(
               onPressed: () async {
-                final v = int.tryParse(amount.text);
+                final v = parseAmount(amount.text);
                 if (name.text.trim().isEmpty || v == null || v <= 0) return;
                 await ref.read(dbProvider).addGoal(GoalsCompanion.insert(
                       name: name.text.trim(),

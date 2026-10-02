@@ -12,3 +12,6 @@ class ThousandsFormatter extends TextInputFormatter {
     return TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length));
   }
 }
+
+/// Lee un monto escrito con puntos de miles ("5.000.000" → 5000000).
+int? parseAmount(String? s) => int.tryParse((s ?? '').replaceAll(RegExp(r'[^0-9]'), ''));
