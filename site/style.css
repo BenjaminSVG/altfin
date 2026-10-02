@@ -196,3 +196,28 @@ footer img{margin:0 auto 10px}footer a{color:#6EE7B0}
 
 @media(max-width:1000px){.lists{grid-template-columns:1fr 1fr}.why{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.lists,.why{grid-template-columns:1fr}.how ol{grid-template-columns:1fr}.how{padding:26px}.strip figure,.strip .phone{width:215px}.strip{gap:22px}}
+
+/* BARRA DE NAVEGACIÓN (mejorada) */
+.nav{inset:14px 16px auto;max-width:1060px;padding:7px 8px 7px 16px;
+  background:linear-gradient(180deg,rgba(20,90,65,.78),rgba(10,40,30,.86));
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 12px 34px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18);
+  backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);
+  transition:transform .3s,background .3s,box-shadow .3s}
+.nav.scrolled{background:rgba(9,32,24,.92);box-shadow:0 14px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12)}
+.brand{font-size:1.25rem;letter-spacing:-.01em}
+.brand img{transition:transform .4s}.brand:hover img{transform:rotate(-12deg) scale(1.12)}
+.nav nav{gap:2px}
+.nav nav a:not(.btn){position:relative;opacity:1;color:#CFE6DB;font-size:.93rem;font-weight:800;padding:8px 14px;border-radius:999px;transition:background .2s,color .2s}
+.nav nav a:not(.btn):hover{background:rgba(255,255,255,.1);color:#fff}
+.nav nav a.act:not(.btn){background:rgba(110,231,176,.18);color:#6EE7B0}
+.nav .btn-small{margin-left:8px;padding:9px 20px;font-size:.92rem;box-shadow:0 3px 0 var(--green-d),0 6px 16px rgba(47,182,124,.35)}
+
+/* barra de desplazamiento del recorrido */
+.strip{scrollbar-color:var(--green) transparent}
+.strip::-webkit-scrollbar{height:10px}
+.strip::-webkit-scrollbar-track{background:transparent;margin:0 max(24px,calc((100vw - 1100px)/2))}
+.strip::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--green),#6EE7B0);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+.strip::-webkit-scrollbar-thumb:hover{background:var(--green-d);background-clip:padding-box}
+@media(max-width:900px){.nav{inset:10px 10px auto}}
+section[id]{scroll-margin-top:90px}

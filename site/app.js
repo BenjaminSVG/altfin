@@ -104,3 +104,19 @@
     s.scrollLeft = l0 - dx;
   });
 })();
+
+// Barra: más sólida al bajar y resalta la sección actual
+(function () {
+  const nav = document.querySelector('.nav');
+  const links = [...document.querySelectorAll('.nav nav a[href^="#"]:not(.btn)')];
+  const secs = links.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll() {
+    nav.classList.toggle('scrolled', scrollY > 60);
+    const y = scrollY + innerHeight * 0.3;
+    let cur = null;
+    secs.forEach((s) => { if (s.offsetTop <= y) cur = s.id; });
+    links.forEach((a) => a.classList.toggle('act', a.getAttribute('href') === '#' + cur));
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
