@@ -12,6 +12,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../data/backup.dart';
 import '../../domain/csv_export.dart';
+import '../../domain/reminder_times.dart';
 import '../../domain/money.dart';
 import '../../domain/pin.dart';
 import '../../services/notification_service.dart';
@@ -39,13 +40,13 @@ class SettingsScreen extends ConsumerWidget {
       final ns = AppSettings.fromMap({
         ...{
           'reminders': s.reminders ? '1' : '0',
-          'reminder_hour': '${s.reminderHour}',
+          'reminder_times': ReminderTimes.encode(s.reminderTimes),
         },
         ...v,
       });
       await NotificationService.instance.reschedule(
         enabled: ns.reminders,
-        hour: ns.reminderHour,
+        times: ns.reminderTimes,
         loggedToday: false,
         streak: 0,
       );
@@ -71,20 +72,55 @@ class SettingsScreen extends ConsumerWidget {
         const SizedBox(height: 8),
         AltCard(
           child: Column(children: [
-            toggle('Recordatorio diario', 'Solo si todavía no anotaste hoy', s.reminders, (v) async {
+            toggle('Recordatorios diarios', 'Solo si todavía no anotaste hoy', s.reminders, (v) async {
               if (v) await NotificationService.instance.requestPermission();
               await set({'reminders': v ? '1' : '0'});
             }),
             Divider(color: c.line),
-            Row(children: [
-              const Expanded(child: Text('Hora del recordatorio', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15))),
-              GestureDetector(
-                onTap: () async {
-                  final t = await showTimePicker(context: context, initialTime: TimeOfDay(hour: s.reminderHour, minute: 0));
-                  if (t != null) await set({'reminder_hour': '${t.hour}'});
-                },
-                child: Pill('${s.reminderHour.toString().padLeft(2, '0')}:00'),
-              ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text('A estas horas', style: TextStyle(color: c.muted, fontSize: 12, fontWeight: FontWeight.w800)),
+            ),
+            const SizedBox(height: 8),
+            Wrap(spacing: 8, runSpacing: 8, children: [
+              for (final t in s.reminderTimes)
+                GestureDetector(
+                  onTap: () async {
+                    final p = await showTimePicker(
+                        context: context, initialTime: TimeOfDay(hour: t ~/ 60, minute: t % 60));
+                    if (p != null) {
+                      await set({'reminder_times': ReminderTimes.encode(ReminderTimes.replace(s.reminderTimes, t, p.hour * 60 + p.minute))});
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(14, 8, 6, 8),
+                    decoration: BoxDecoration(color: c.greenSoft, borderRadius: BorderRadius.circular(99)),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Text(ReminderTimes.format(t), style: numStyle(15, color: c.greenDark, weight: FontWeight.w900)),
+                      const SizedBox(width: 4),
+                      if (s.reminderTimes.length > 1)
+                        GestureDetector(
+                          onTap: () => set({'reminder_times': ReminderTimes.encode(ReminderTimes.remove(s.reminderTimes, t))}),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Icon(Icons.close_rounded, size: 18, color: c.greenDark),
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 8),
+                    ]),
+                  ),
+                ),
+              if (s.reminderTimes.length < ReminderTimes.max)
+                GestureDetector(
+                  onTap: () async {
+                    final p = await showTimePicker(context: context, initialTime: const TimeOfDay(hour: 12, minute: 0));
+                    if (p != null) {
+                      await set({'reminder_times': ReminderTimes.encode(ReminderTimes.add(s.reminderTimes, p.hour * 60 + p.minute))});
+                    }
+                  },
+                  child: const Pill('+ Agregar hora'),
+                ),
             ]),
             const SizedBox(height: 10),
             BigButton('PROBAR NOTIFICACIÓN', ghost: true, onPressed: () => NotificationService.instance.showTest()),

@@ -388,6 +388,28 @@ void main() {
     await finish(t, db);
   });
 
+  testWidgets('varios recordatorios: se ven todas las horas y se puede quitar una', (t) async {
+    final db = await freshDb(onboarded: true);
+    await t.runAsync(() => db.setSetting('reminder_times', '09:00,14:30,20:00'));
+    await boot(t, db);
+    await t.tap(find.text('Finn').last);
+    await t.pump(const Duration(milliseconds: 600));
+    await t.tap(find.byIcon(Icons.settings_rounded));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    expect(find.text('09:00'), findsOneWidget);
+    expect(find.text('14:30'), findsOneWidget);
+    expect(find.text('20:00'), findsOneWidget);
+    expect(find.text('+ Agregar hora'), findsOneWidget);
+    await shot(t, '29-recordatorios');
+    // La "x" de la hora 14:30 la quita.
+    final chip = find.ancestor(of: find.text('14:30'), matching: find.byType(Row)).first;
+    await t.tap(find.descendant(of: chip, matching: find.byIcon(Icons.close_rounded)));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    expect(await _get(t, db, 'reminder_times'), '09:00,20:00');
+    expect(find.text('14:30'), findsNothing);
+    await finish(t, db);
+  });
+
   testWidgets('en Ajustes se puede quitar el sueldo y el porcentaje', (t) async {
     final db = await freshDb(onboarded: true);
     await boot(t, db);

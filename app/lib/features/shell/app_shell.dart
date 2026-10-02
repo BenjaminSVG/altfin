@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -122,7 +123,7 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
     final now = ref.read(clockProvider)();
     NotificationService.instance.reschedule(
       enabled: s.reminders,
-      hour: s.reminderHour,
+      times: s.reminderTimes,
       loggedToday: logged.any((d) => dayOnly(d) == dayOnly(now)),
       streak: Gamification.currentStreak(logged, now),
     );
@@ -138,7 +139,7 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
     ref.listen(monthSummaryProvider, (_, _) => _pushWidgets());
     ref.listen(settingsProvider, (a, b) {
       if (a?.value?.reminders != b.value?.reminders ||
-          a?.value?.reminderHour != b.value?.reminderHour) {
+          !listEquals(a?.value?.reminderTimes, b.value?.reminderTimes)) {
         _reschedule();
       }
     });

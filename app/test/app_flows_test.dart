@@ -203,7 +203,7 @@ void main() {
     await t.tap(find.text('Gastos fijos y suscripciones'));
     await t.pumpAndSettle(const Duration(milliseconds: 100));
     await shot(t, '15-gastos-fijos');
-    await t.pageBack();
+    await t.tap(find.byType(BackButton));
     await t.pumpAndSettle(const Duration(milliseconds: 100));
     await t.tap(find.text('Informe'));
     await t.pumpAndSettle(const Duration(milliseconds: 100));

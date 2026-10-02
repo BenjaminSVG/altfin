@@ -30,9 +30,7 @@ class NotificationService {
 
   Future<void> init() async {
     if (_ready) return;
-    // Por ahora solo Android: el plugin de Windows cierra la app al iniciar
-    // (pendiente de investigar). En PC se usará otra vía.
-    if (kIsWeb || !Platform.isAndroid) return;
+    if (kIsWeb || !(Platform.isAndroid || Platform.isWindows)) return;
     try {
       tzdata.initializeTimeZones();
       final info = await FlutterTimezone.getLocalTimezone();
@@ -59,29 +57,32 @@ class NotificationService {
   Future<bool> requestPermission() async {
     if (!_ready) return false;
     if (Platform.isAndroid) {
-      final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       return await android?.requestNotificationsPermission() ?? false;
     }
     return true;
   }
 
   NotificationDetails get _details => const NotificationDetails(
-        android: AndroidNotificationDetails(
-          _channelId,
-          'Recordatorios de Finn',
-          channelDescription: 'Te recuerdo anotar tus gastos',
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
-        ),
-        windows: WindowsNotificationDetails(),
-      );
+    android: AndroidNotificationDetails(
+      _channelId,
+      'Recordatorios de Finn',
+      channelDescription: 'Te recuerdo anotar tus gastos',
+      importance: Importance.defaultImportance,
+      priority: Priority.defaultPriority,
+    ),
+    windows: WindowsNotificationDetails(),
+  );
 
   /// Reprograma los próximos 14 días. Se llama al abrir la app, al registrar
   /// un gasto y al cambiar los ajustes. En Windows las notificaciones no se
-  /// repiten solas, por eso se agendan día por día.
+  /// repiten solas, por eso se agendan día por día y hora por hora.
   Future<void> reschedule({
     required bool enabled,
-    required int hour,
+    required List<int> times,
     required bool loggedToday,
     required int streak,
   }) async {
@@ -92,17 +93,26 @@ class NotificationService {
       final now = tz.TZDateTime.now(tz.local);
       for (var i = 0; i < 14; i++) {
         if (i == 0 && loggedToday) continue;
-        final at = tz.TZDateTime(tz.local, now.year, now.month, now.day + i, hour);
-        if (at.isBefore(now)) continue;
-        final m = _messages[(now.day + i) % _messages.length];
-        await _plugin.zonedSchedule(
-          id: 100 + i,
-          title: m.$1,
-          body: m.$2,
-          scheduledDate: at,
-          notificationDetails: _details,
-          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        );
+        for (var k = 0; k < times.length; k++) {
+          final at = tz.TZDateTime(
+            tz.local,
+            now.year,
+            now.month,
+            now.day + i,
+            times[k] ~/ 60,
+            times[k] % 60,
+          );
+          if (at.isBefore(now)) continue;
+          final m = _messages[(now.day + i + k) % _messages.length];
+          await _plugin.zonedSchedule(
+            id: 1000 + i * 10 + k,
+            title: m.$1,
+            body: m.$2,
+            scheduledDate: at,
+            notificationDetails: _details,
+            androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          );
+        }
       }
       // Aviso de racha en peligro: hoy, 2 h antes de medianoche.
       if (!loggedToday && streak > 0) {
@@ -110,7 +120,8 @@ class NotificationService {
         if (risk.isAfter(now)) {
           await _plugin.zonedSchedule(
             id: 200,
-            title: 'Tu racha de $streak ${streak == 1 ? 'día' : 'días'} termina esta noche',
+            title:
+                'Tu racha de $streak ${streak == 1 ? 'día' : 'días'} termina esta noche',
             body: 'Anotá un gasto o tocá "Hoy no gasté" para no perderla.',
             scheduledDate: risk,
             notificationDetails: _details,

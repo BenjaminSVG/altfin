@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'features/lock/lock_gate.dart';
@@ -24,6 +25,9 @@ class AltFinApp extends ConsumerWidget {
     return MaterialApp(
       title: 'AltFin',
       debugShowCheckedModeBanner: false,
+      locale: const Locale('es'),
+      supportedLocales: const [Locale('es')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       theme: AppTheme.build(Brightness.light),
       darkTheme: AppTheme.build(Brightness.dark),
       themeMode: dark ? ThemeMode.dark : ThemeMode.light,

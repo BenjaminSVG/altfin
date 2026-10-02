@@ -5,6 +5,7 @@ import '../domain/challenge_rule.dart';
 import '../domain/finance_engine.dart';
 import '../domain/fx.dart';
 import '../domain/net_worth.dart';
+import '../domain/reminder_times.dart';
 import '../domain/gamification.dart';
 import '../domain/money.dart';
 
@@ -30,7 +31,7 @@ class AppSettings {
     this.xp = 0,
     this.dark = false,
     this.pygPerUsd = Fx.defaultRate,
-    this.reminderHour = 20,
+    this.reminderTimes = ReminderTimes.defaultTimes,
     this.reminders = true,
     this.pinHash = '',
     this.pinSalt = '',
@@ -52,7 +53,7 @@ class AppSettings {
         xp: int.tryParse(m['xp'] ?? '') ?? 0,
         dark: m['dark'] == '1',
         pygPerUsd: double.tryParse(m['usd_rate'] ?? '') ?? Fx.defaultRate,
-        reminderHour: int.tryParse(m['reminder_hour'] ?? '') ?? 20,
+        reminderTimes: ReminderTimes.parse(m['reminder_times'], legacyHour: int.tryParse(m['reminder_hour'] ?? '')),
         reminders: (m['reminders'] ?? '1') == '1',
         pinHash: m['pin_hash'] ?? '',
         pinSalt: m['pin_salt'] ?? '',
@@ -73,7 +74,8 @@ class AppSettings {
   final int xp;
   final bool dark;
   final double pygPerUsd;
-  final int reminderHour;
+  /// Horas de los recordatorios (minutos desde medianoche).
+  final List<int> reminderTimes;
   final bool reminders;
   final String pinHash;
   final String pinSalt;
