@@ -2742,6 +2742,709 @@ class DebtsCompanion extends UpdateCompanion<Debt> {
   }
 }
 
+class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HabitsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
+  @override
+  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
+    'icon',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('tag'),
+  );
+  static const VerificationMeta _toneMeta = const VerificationMeta('tone');
+  @override
+  late final GeneratedColumn<String> tone = GeneratedColumn<String>(
+    'tone',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('o'),
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<int> categoryId = GeneratedColumn<int>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES categories (id)',
+    ),
+  );
+  static const VerificationMeta _unitPriceMinorMeta = const VerificationMeta(
+    'unitPriceMinor',
+  );
+  @override
+  late final GeneratedColumn<int> unitPriceMinor = GeneratedColumn<int>(
+    'unit_price_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _timesPerDayMeta = const VerificationMeta(
+    'timesPerDay',
+  );
+  @override
+  late final GeneratedColumn<int> timesPerDay = GeneratedColumn<int>(
+    'times_per_day',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _weekdaysMeta = const VerificationMeta(
+    'weekdays',
+  );
+  @override
+  late final GeneratedColumn<int> weekdays = GeneratedColumn<int>(
+    'weekdays',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(31),
+  );
+  static const VerificationMeta _activeMeta = const VerificationMeta('active');
+  @override
+  late final GeneratedColumn<bool> active = GeneratedColumn<bool>(
+    'active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _createdOnMeta = const VerificationMeta(
+    'createdOn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdOn = GeneratedColumn<DateTime>(
+    'created_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastGeneratedMeta = const VerificationMeta(
+    'lastGenerated',
+  );
+  @override
+  late final GeneratedColumn<String> lastGenerated = GeneratedColumn<String>(
+    'last_generated',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    icon,
+    tone,
+    categoryId,
+    unitPriceMinor,
+    currency,
+    timesPerDay,
+    weekdays,
+    active,
+    createdOn,
+    lastGenerated,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'habits';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Habit> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('icon')) {
+      context.handle(
+        _iconMeta,
+        icon.isAcceptableOrUnknown(data['icon']!, _iconMeta),
+      );
+    }
+    if (data.containsKey('tone')) {
+      context.handle(
+        _toneMeta,
+        tone.isAcceptableOrUnknown(data['tone']!, _toneMeta),
+      );
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('unit_price_minor')) {
+      context.handle(
+        _unitPriceMinorMeta,
+        unitPriceMinor.isAcceptableOrUnknown(
+          data['unit_price_minor']!,
+          _unitPriceMinorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_unitPriceMinorMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_currencyMeta);
+    }
+    if (data.containsKey('times_per_day')) {
+      context.handle(
+        _timesPerDayMeta,
+        timesPerDay.isAcceptableOrUnknown(
+          data['times_per_day']!,
+          _timesPerDayMeta,
+        ),
+      );
+    }
+    if (data.containsKey('weekdays')) {
+      context.handle(
+        _weekdaysMeta,
+        weekdays.isAcceptableOrUnknown(data['weekdays']!, _weekdaysMeta),
+      );
+    }
+    if (data.containsKey('active')) {
+      context.handle(
+        _activeMeta,
+        active.isAcceptableOrUnknown(data['active']!, _activeMeta),
+      );
+    }
+    if (data.containsKey('created_on')) {
+      context.handle(
+        _createdOnMeta,
+        createdOn.isAcceptableOrUnknown(data['created_on']!, _createdOnMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdOnMeta);
+    }
+    if (data.containsKey('last_generated')) {
+      context.handle(
+        _lastGeneratedMeta,
+        lastGenerated.isAcceptableOrUnknown(
+          data['last_generated']!,
+          _lastGeneratedMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Habit map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Habit(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      icon: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}icon'],
+      )!,
+      tone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tone'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}category_id'],
+      ),
+      unitPriceMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unit_price_minor'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      timesPerDay: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}times_per_day'],
+      )!,
+      weekdays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}weekdays'],
+      )!,
+      active: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}active'],
+      )!,
+      createdOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_on'],
+      )!,
+      lastGenerated: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_generated'],
+      )!,
+    );
+  }
+
+  @override
+  $HabitsTable createAlias(String alias) {
+    return $HabitsTable(attachedDatabase, alias);
+  }
+}
+
+class Habit extends DataClass implements Insertable<Habit> {
+  final int id;
+  final String name;
+  final String icon;
+  final String tone;
+  final int? categoryId;
+
+  /// Precio de UNA vez (un boleto, una merienda).
+  final int unitPriceMinor;
+  final String currency;
+  final int timesPerDay;
+
+  /// Días de la semana en bits: lun = 1 ... dom = 64 (ver HabitRule).
+  final int weekdays;
+  final bool active;
+  final DateTime createdOn;
+
+  /// Último día generado, "2026-10-12" (vacío = todavía ninguno).
+  final String lastGenerated;
+  const Habit({
+    required this.id,
+    required this.name,
+    required this.icon,
+    required this.tone,
+    this.categoryId,
+    required this.unitPriceMinor,
+    required this.currency,
+    required this.timesPerDay,
+    required this.weekdays,
+    required this.active,
+    required this.createdOn,
+    required this.lastGenerated,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['icon'] = Variable<String>(icon);
+    map['tone'] = Variable<String>(tone);
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<int>(categoryId);
+    }
+    map['unit_price_minor'] = Variable<int>(unitPriceMinor);
+    map['currency'] = Variable<String>(currency);
+    map['times_per_day'] = Variable<int>(timesPerDay);
+    map['weekdays'] = Variable<int>(weekdays);
+    map['active'] = Variable<bool>(active);
+    map['created_on'] = Variable<DateTime>(createdOn);
+    map['last_generated'] = Variable<String>(lastGenerated);
+    return map;
+  }
+
+  HabitsCompanion toCompanion(bool nullToAbsent) {
+    return HabitsCompanion(
+      id: Value(id),
+      name: Value(name),
+      icon: Value(icon),
+      tone: Value(tone),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
+      unitPriceMinor: Value(unitPriceMinor),
+      currency: Value(currency),
+      timesPerDay: Value(timesPerDay),
+      weekdays: Value(weekdays),
+      active: Value(active),
+      createdOn: Value(createdOn),
+      lastGenerated: Value(lastGenerated),
+    );
+  }
+
+  factory Habit.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Habit(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      icon: serializer.fromJson<String>(json['icon']),
+      tone: serializer.fromJson<String>(json['tone']),
+      categoryId: serializer.fromJson<int?>(json['categoryId']),
+      unitPriceMinor: serializer.fromJson<int>(json['unitPriceMinor']),
+      currency: serializer.fromJson<String>(json['currency']),
+      timesPerDay: serializer.fromJson<int>(json['timesPerDay']),
+      weekdays: serializer.fromJson<int>(json['weekdays']),
+      active: serializer.fromJson<bool>(json['active']),
+      createdOn: serializer.fromJson<DateTime>(json['createdOn']),
+      lastGenerated: serializer.fromJson<String>(json['lastGenerated']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'icon': serializer.toJson<String>(icon),
+      'tone': serializer.toJson<String>(tone),
+      'categoryId': serializer.toJson<int?>(categoryId),
+      'unitPriceMinor': serializer.toJson<int>(unitPriceMinor),
+      'currency': serializer.toJson<String>(currency),
+      'timesPerDay': serializer.toJson<int>(timesPerDay),
+      'weekdays': serializer.toJson<int>(weekdays),
+      'active': serializer.toJson<bool>(active),
+      'createdOn': serializer.toJson<DateTime>(createdOn),
+      'lastGenerated': serializer.toJson<String>(lastGenerated),
+    };
+  }
+
+  Habit copyWith({
+    int? id,
+    String? name,
+    String? icon,
+    String? tone,
+    Value<int?> categoryId = const Value.absent(),
+    int? unitPriceMinor,
+    String? currency,
+    int? timesPerDay,
+    int? weekdays,
+    bool? active,
+    DateTime? createdOn,
+    String? lastGenerated,
+  }) => Habit(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    icon: icon ?? this.icon,
+    tone: tone ?? this.tone,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    unitPriceMinor: unitPriceMinor ?? this.unitPriceMinor,
+    currency: currency ?? this.currency,
+    timesPerDay: timesPerDay ?? this.timesPerDay,
+    weekdays: weekdays ?? this.weekdays,
+    active: active ?? this.active,
+    createdOn: createdOn ?? this.createdOn,
+    lastGenerated: lastGenerated ?? this.lastGenerated,
+  );
+  Habit copyWithCompanion(HabitsCompanion data) {
+    return Habit(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      icon: data.icon.present ? data.icon.value : this.icon,
+      tone: data.tone.present ? data.tone.value : this.tone,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      unitPriceMinor: data.unitPriceMinor.present
+          ? data.unitPriceMinor.value
+          : this.unitPriceMinor,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      timesPerDay: data.timesPerDay.present
+          ? data.timesPerDay.value
+          : this.timesPerDay,
+      weekdays: data.weekdays.present ? data.weekdays.value : this.weekdays,
+      active: data.active.present ? data.active.value : this.active,
+      createdOn: data.createdOn.present ? data.createdOn.value : this.createdOn,
+      lastGenerated: data.lastGenerated.present
+          ? data.lastGenerated.value
+          : this.lastGenerated,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Habit(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('icon: $icon, ')
+          ..write('tone: $tone, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('unitPriceMinor: $unitPriceMinor, ')
+          ..write('currency: $currency, ')
+          ..write('timesPerDay: $timesPerDay, ')
+          ..write('weekdays: $weekdays, ')
+          ..write('active: $active, ')
+          ..write('createdOn: $createdOn, ')
+          ..write('lastGenerated: $lastGenerated')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    icon,
+    tone,
+    categoryId,
+    unitPriceMinor,
+    currency,
+    timesPerDay,
+    weekdays,
+    active,
+    createdOn,
+    lastGenerated,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Habit &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.icon == this.icon &&
+          other.tone == this.tone &&
+          other.categoryId == this.categoryId &&
+          other.unitPriceMinor == this.unitPriceMinor &&
+          other.currency == this.currency &&
+          other.timesPerDay == this.timesPerDay &&
+          other.weekdays == this.weekdays &&
+          other.active == this.active &&
+          other.createdOn == this.createdOn &&
+          other.lastGenerated == this.lastGenerated);
+}
+
+class HabitsCompanion extends UpdateCompanion<Habit> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> icon;
+  final Value<String> tone;
+  final Value<int?> categoryId;
+  final Value<int> unitPriceMinor;
+  final Value<String> currency;
+  final Value<int> timesPerDay;
+  final Value<int> weekdays;
+  final Value<bool> active;
+  final Value<DateTime> createdOn;
+  final Value<String> lastGenerated;
+  const HabitsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.icon = const Value.absent(),
+    this.tone = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.unitPriceMinor = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.timesPerDay = const Value.absent(),
+    this.weekdays = const Value.absent(),
+    this.active = const Value.absent(),
+    this.createdOn = const Value.absent(),
+    this.lastGenerated = const Value.absent(),
+  });
+  HabitsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.icon = const Value.absent(),
+    this.tone = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    required int unitPriceMinor,
+    required String currency,
+    this.timesPerDay = const Value.absent(),
+    this.weekdays = const Value.absent(),
+    this.active = const Value.absent(),
+    required DateTime createdOn,
+    this.lastGenerated = const Value.absent(),
+  }) : name = Value(name),
+       unitPriceMinor = Value(unitPriceMinor),
+       currency = Value(currency),
+       createdOn = Value(createdOn);
+  static Insertable<Habit> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? icon,
+    Expression<String>? tone,
+    Expression<int>? categoryId,
+    Expression<int>? unitPriceMinor,
+    Expression<String>? currency,
+    Expression<int>? timesPerDay,
+    Expression<int>? weekdays,
+    Expression<bool>? active,
+    Expression<DateTime>? createdOn,
+    Expression<String>? lastGenerated,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (icon != null) 'icon': icon,
+      if (tone != null) 'tone': tone,
+      if (categoryId != null) 'category_id': categoryId,
+      if (unitPriceMinor != null) 'unit_price_minor': unitPriceMinor,
+      if (currency != null) 'currency': currency,
+      if (timesPerDay != null) 'times_per_day': timesPerDay,
+      if (weekdays != null) 'weekdays': weekdays,
+      if (active != null) 'active': active,
+      if (createdOn != null) 'created_on': createdOn,
+      if (lastGenerated != null) 'last_generated': lastGenerated,
+    });
+  }
+
+  HabitsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? icon,
+    Value<String>? tone,
+    Value<int?>? categoryId,
+    Value<int>? unitPriceMinor,
+    Value<String>? currency,
+    Value<int>? timesPerDay,
+    Value<int>? weekdays,
+    Value<bool>? active,
+    Value<DateTime>? createdOn,
+    Value<String>? lastGenerated,
+  }) {
+    return HabitsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+      tone: tone ?? this.tone,
+      categoryId: categoryId ?? this.categoryId,
+      unitPriceMinor: unitPriceMinor ?? this.unitPriceMinor,
+      currency: currency ?? this.currency,
+      timesPerDay: timesPerDay ?? this.timesPerDay,
+      weekdays: weekdays ?? this.weekdays,
+      active: active ?? this.active,
+      createdOn: createdOn ?? this.createdOn,
+      lastGenerated: lastGenerated ?? this.lastGenerated,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (icon.present) {
+      map['icon'] = Variable<String>(icon.value);
+    }
+    if (tone.present) {
+      map['tone'] = Variable<String>(tone.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<int>(categoryId.value);
+    }
+    if (unitPriceMinor.present) {
+      map['unit_price_minor'] = Variable<int>(unitPriceMinor.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (timesPerDay.present) {
+      map['times_per_day'] = Variable<int>(timesPerDay.value);
+    }
+    if (weekdays.present) {
+      map['weekdays'] = Variable<int>(weekdays.value);
+    }
+    if (active.present) {
+      map['active'] = Variable<bool>(active.value);
+    }
+    if (createdOn.present) {
+      map['created_on'] = Variable<DateTime>(createdOn.value);
+    }
+    if (lastGenerated.present) {
+      map['last_generated'] = Variable<String>(lastGenerated.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HabitsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('icon: $icon, ')
+          ..write('tone: $tone, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('unitPriceMinor: $unitPriceMinor, ')
+          ..write('currency: $currency, ')
+          ..write('timesPerDay: $timesPerDay, ')
+          ..write('weekdays: $weekdays, ')
+          ..write('active: $active, ')
+          ..write('createdOn: $createdOn, ')
+          ..write('lastGenerated: $lastGenerated')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2752,6 +3455,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SettingsTable settings = $SettingsTable(this);
   late final $RecurringsTable recurrings = $RecurringsTable(this);
   late final $DebtsTable debts = $DebtsTable(this);
+  late final $HabitsTable habits = $HabitsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2764,6 +3468,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     settings,
     recurrings,
     debts,
+    habits,
   ];
 }
 
@@ -2822,6 +3527,25 @@ final class $$CategoriesTableReferences
     ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_recurringsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$HabitsTable, List<Habit>> _habitsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.habits,
+    aliasName: 'categories__id__habits__category_id',
+  );
+
+  $$HabitsTableProcessedTableManager get habitsRefs {
+    final manager = $$HabitsTableTableManager(
+      $_db,
+      $_db.habits,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_habitsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -2913,6 +3637,31 @@ class $$CategoriesTableFilterComposer
           }) => $$RecurringsTableFilterComposer(
             $db: $db,
             $table: $db.recurrings,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> habitsRefs(
+    Expression<bool> Function($$HabitsTableFilterComposer f) f,
+  ) {
+    final $$HabitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.habits,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HabitsTableFilterComposer(
+            $db: $db,
+            $table: $db.habits,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3049,6 +3798,31 @@ class $$CategoriesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> habitsRefs<T extends Object>(
+    Expression<T> Function($$HabitsTableAnnotationComposer a) f,
+  ) {
+    final $$HabitsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.habits,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HabitsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.habits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$CategoriesTableTableManager
@@ -3064,7 +3838,11 @@ class $$CategoriesTableTableManager
           $$CategoriesTableUpdateCompanionBuilder,
           (Category, $$CategoriesTableReferences),
           Category,
-          PrefetchHooks Function({bool txnsRefs, bool recurringsRefs})
+          PrefetchHooks Function({
+            bool txnsRefs,
+            bool recurringsRefs,
+            bool habitsRefs,
+          })
         > {
   $$CategoriesTableTableManager(_$AppDatabase db, $CategoriesTable table)
     : super(
@@ -3121,50 +3899,85 @@ class $$CategoriesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({txnsRefs = false, recurringsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (txnsRefs) db.txns,
-                if (recurringsRefs) db.recurrings,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (txnsRefs)
-                    await $_getPrefetchedData<Category, $CategoriesTable, Txn>(
-                      currentTable: table,
-                      referencedTable: $$CategoriesTableReferences
-                          ._txnsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$CategoriesTableReferences(db, table, p0).txnsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.categoryId == item.id),
-                      typedResults: items,
-                    ),
-                  if (recurringsRefs)
-                    await $_getPrefetchedData<
-                      Category,
-                      $CategoriesTable,
-                      Recurring
-                    >(
-                      currentTable: table,
-                      referencedTable: $$CategoriesTableReferences
-                          ._recurringsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$CategoriesTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).recurringsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.categoryId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({txnsRefs = false, recurringsRefs = false, habitsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (txnsRefs) db.txns,
+                    if (recurringsRefs) db.recurrings,
+                    if (habitsRefs) db.habits,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (txnsRefs)
+                        await $_getPrefetchedData<
+                          Category,
+                          $CategoriesTable,
+                          Txn
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableReferences
+                              ._txnsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).txnsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.categoryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (recurringsRefs)
+                        await $_getPrefetchedData<
+                          Category,
+                          $CategoriesTable,
+                          Recurring
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableReferences
+                              ._recurringsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).recurringsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.categoryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (habitsRefs)
+                        await $_getPrefetchedData<
+                          Category,
+                          $CategoriesTable,
+                          Habit
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableReferences
+                              ._habitsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).habitsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.categoryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -3181,7 +3994,11 @@ typedef $$CategoriesTableProcessedTableManager =
       $$CategoriesTableUpdateCompanionBuilder,
       (Category, $$CategoriesTableReferences),
       Category,
-      PrefetchHooks Function({bool txnsRefs, bool recurringsRefs})
+      PrefetchHooks Function({
+        bool txnsRefs,
+        bool recurringsRefs,
+        bool habitsRefs,
+      })
     >;
 typedef $$TxnsTableCreateCompanionBuilder = TxnsCompanion Function({
   Value<int> id,
@@ -4641,6 +5458,452 @@ typedef $$DebtsTableProcessedTableManager =
       Debt,
       PrefetchHooks Function()
     >;
+typedef $$HabitsTableCreateCompanionBuilder = HabitsCompanion Function({
+  Value<int> id,
+  required String name,
+  Value<String> icon,
+  Value<String> tone,
+  Value<int?> categoryId,
+  required int unitPriceMinor,
+  required String currency,
+  Value<int> timesPerDay,
+  Value<int> weekdays,
+  Value<bool> active,
+  required DateTime createdOn,
+  Value<String> lastGenerated,
+});
+typedef $$HabitsTableUpdateCompanionBuilder = HabitsCompanion Function({
+  Value<int> id,
+  Value<String> name,
+  Value<String> icon,
+  Value<String> tone,
+  Value<int?> categoryId,
+  Value<int> unitPriceMinor,
+  Value<String> currency,
+  Value<int> timesPerDay,
+  Value<int> weekdays,
+  Value<bool> active,
+  Value<DateTime> createdOn,
+  Value<String> lastGenerated,
+});
+
+final class $$HabitsTableReferences
+    extends BaseReferences<_$AppDatabase, $HabitsTable, Habit> {
+  $$HabitsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $CategoriesTable _categoryIdTable(_$AppDatabase db) =>
+      db.categories.createAlias('habits__category_id__categories__id');
+
+  $$CategoriesTableProcessedTableManager? get categoryId {
+    final $_column = $_itemColumn<int>('category_id');
+    if ($_column == null) return null;
+    final manager = $$CategoriesTableTableManager(
+      $_db,
+      $_db.categories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$HabitsTableFilterComposer
+    extends Composer<_$AppDatabase, $HabitsTable> {
+  $$HabitsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tone => $composableBuilder(
+    column: $table.tone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get unitPriceMinor => $composableBuilder(
+    column: $table.unitPriceMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get timesPerDay => $composableBuilder(
+    column: $table.timesPerDay,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get weekdays => $composableBuilder(
+    column: $table.weekdays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get active => $composableBuilder(
+    column: $table.active,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdOn => $composableBuilder(
+    column: $table.createdOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastGenerated => $composableBuilder(
+    column: $table.lastGenerated,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$CategoriesTableFilterComposer get categoryId {
+    final $$CategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$HabitsTableOrderingComposer
+    extends Composer<_$AppDatabase, $HabitsTable> {
+  $$HabitsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tone => $composableBuilder(
+    column: $table.tone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get unitPriceMinor => $composableBuilder(
+    column: $table.unitPriceMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get timesPerDay => $composableBuilder(
+    column: $table.timesPerDay,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get weekdays => $composableBuilder(
+    column: $table.weekdays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get active => $composableBuilder(
+    column: $table.active,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdOn => $composableBuilder(
+    column: $table.createdOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastGenerated => $composableBuilder(
+    column: $table.lastGenerated,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$CategoriesTableOrderingComposer get categoryId {
+    final $$CategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$HabitsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HabitsTable> {
+  $$HabitsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get icon =>
+      $composableBuilder(column: $table.icon, builder: (column) => column);
+
+  GeneratedColumn<String> get tone =>
+      $composableBuilder(column: $table.tone, builder: (column) => column);
+
+  GeneratedColumn<int> get unitPriceMinor => $composableBuilder(
+    column: $table.unitPriceMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<int> get timesPerDay => $composableBuilder(
+    column: $table.timesPerDay,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get weekdays =>
+      $composableBuilder(column: $table.weekdays, builder: (column) => column);
+
+  GeneratedColumn<bool> get active =>
+      $composableBuilder(column: $table.active, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdOn =>
+      $composableBuilder(column: $table.createdOn, builder: (column) => column);
+
+  GeneratedColumn<String> get lastGenerated => $composableBuilder(
+    column: $table.lastGenerated,
+    builder: (column) => column,
+  );
+
+  $$CategoriesTableAnnotationComposer get categoryId {
+    final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$HabitsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $HabitsTable,
+          Habit,
+          $$HabitsTableFilterComposer,
+          $$HabitsTableOrderingComposer,
+          $$HabitsTableAnnotationComposer,
+          $$HabitsTableCreateCompanionBuilder,
+          $$HabitsTableUpdateCompanionBuilder,
+          (Habit, $$HabitsTableReferences),
+          Habit,
+          PrefetchHooks Function({bool categoryId})
+        > {
+  $$HabitsTableTableManager(_$AppDatabase db, $HabitsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$HabitsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$HabitsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$HabitsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> icon = const Value.absent(),
+                Value<String> tone = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                Value<int> unitPriceMinor = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<int> timesPerDay = const Value.absent(),
+                Value<int> weekdays = const Value.absent(),
+                Value<bool> active = const Value.absent(),
+                Value<DateTime> createdOn = const Value.absent(),
+                Value<String> lastGenerated = const Value.absent(),
+              }) => HabitsCompanion(
+                id: id,
+                name: name,
+                icon: icon,
+                tone: tone,
+                categoryId: categoryId,
+                unitPriceMinor: unitPriceMinor,
+                currency: currency,
+                timesPerDay: timesPerDay,
+                weekdays: weekdays,
+                active: active,
+                createdOn: createdOn,
+                lastGenerated: lastGenerated,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<String> icon = const Value.absent(),
+                Value<String> tone = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                required int unitPriceMinor,
+                required String currency,
+                Value<int> timesPerDay = const Value.absent(),
+                Value<int> weekdays = const Value.absent(),
+                Value<bool> active = const Value.absent(),
+                required DateTime createdOn,
+                Value<String> lastGenerated = const Value.absent(),
+              }) => HabitsCompanion.insert(
+                id: id,
+                name: name,
+                icon: icon,
+                tone: tone,
+                categoryId: categoryId,
+                unitPriceMinor: unitPriceMinor,
+                currency: currency,
+                timesPerDay: timesPerDay,
+                weekdays: weekdays,
+                active: active,
+                createdOn: createdOn,
+                lastGenerated: lastGenerated,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$HabitsTable, Habit>(table),
+                  $$HabitsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({categoryId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (categoryId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.categoryId,
+                        referencedTable: $$HabitsTableReferences
+                            ._categoryIdTable(db),
+                        referencedColumn: $$HabitsTableReferences
+                            ._categoryIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$HabitsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $HabitsTable,
+      Habit,
+      $$HabitsTableFilterComposer,
+      $$HabitsTableOrderingComposer,
+      $$HabitsTableAnnotationComposer,
+      $$HabitsTableCreateCompanionBuilder,
+      $$HabitsTableUpdateCompanionBuilder,
+      (Habit, $$HabitsTableReferences),
+      Habit,
+      PrefetchHooks Function({bool categoryId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4658,4 +5921,6 @@ class $AppDatabaseManager {
       $$RecurringsTableTableManager(_db, _db.recurrings);
   $$DebtsTableTableManager get debts =>
       $$DebtsTableTableManager(_db, _db.debts);
+  $$HabitsTableTableManager get habits =>
+      $$HabitsTableTableManager(_db, _db.habits);
 }

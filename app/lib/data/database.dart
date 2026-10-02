@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
+import '../domain/habit_rule.dart';
 import '../domain/recurring_rule.dart';
 
 part 'database.g.dart';
@@ -59,6 +60,29 @@ class Recurrings extends Table {
   TextColumn get lastMonth => text().withDefault(const Constant(''))();
 }
 
+/// Gastos repetitivos (autobús, merienda...): veces al día × precio, en los
+/// días de la semana elegidos. Se anotan solos cada día.
+class Habits extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  TextColumn get icon => text().withDefault(const Constant('tag'))();
+  TextColumn get tone => text().withDefault(const Constant('o'))();
+  IntColumn get categoryId => integer().nullable().references(Categories, #id)();
+
+  /// Precio de UNA vez (un boleto, una merienda).
+  IntColumn get unitPriceMinor => integer()();
+  TextColumn get currency => text()();
+  IntColumn get timesPerDay => integer().withDefault(const Constant(1))();
+
+  /// Días de la semana en bits: lun = 1 ... dom = 64 (ver HabitRule).
+  IntColumn get weekdays => integer().withDefault(const Constant(31))();
+  BoolColumn get active => boolean().withDefault(const Constant(true))();
+  DateTimeColumn get createdOn => dateTime()();
+
+  /// Último día generado, "2026-10-12" (vacío = todavía ninguno).
+  TextColumn get lastGenerated => text().withDefault(const Constant(''))();
+}
+
 /// Deudas (tarjeta, préstamo...) para el plan de pago.
 class Debts extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -88,13 +112,13 @@ class Settings extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings, Debts])
+@DriftDatabase(tables: [Categories, Txns, Goals, DayChecks, Settings, Recurrings, Debts, Habits])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
       : super(executor ?? driftDatabase(name: 'altfin'));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -105,8 +129,52 @@ class AppDatabase extends _$AppDatabase {
         onUpgrade: (m, from, to) async {
           if (from < 2) await m.createTable(recurrings);
           if (from < 3) await m.createTable(debts);
+          if (from < 4) await m.createTable(habits);
         },
       );
+
+  // ---- Hábitos de gasto (autobús, merienda...) ----
+  Stream<List<Habit>> watchHabits() => select(habits).watch();
+
+  Future<int> addHabit(HabitsCompanion h) => into(habits).insert(h);
+
+  Future<void> deleteHabit(int id) => (delete(habits)..where((t) => t.id.equals(id))).go();
+
+  Future<void> setHabitActive(int id, bool active) =>
+      (update(habits)..where((t) => t.id.equals(id))).write(HabitsCompanion(active: Value(active)));
+
+  /// Anota los gastos de los hábitos que ya tocan (hasta hoy, incluido) y que
+  /// todavía no se generaron. Un movimiento por día: veces al día × precio.
+  /// Devuelve cuántos movimientos creó.
+  Future<int> generateDueHabits(DateTime now) async {
+    final all = await (select(habits)..where((t) => t.active.equals(true))).get();
+    var created = 0;
+    for (final h in all) {
+      final days = HabitRule.daysToGenerate(
+        mask: h.weekdays,
+        createdOn: h.createdOn,
+        lastGenerated: HabitRule.parseDayKey(h.lastGenerated),
+        today: now,
+      );
+      for (final d in days) {
+        final isToday = HabitRule.dayOnly(d) == HabitRule.dayOnly(now);
+        // A las 8 de la mañana, salvo hoy si todavía no son las 8 (no queda en el futuro).
+        final at = isToday && now.hour < 8 ? now : DateTime(d.year, d.month, d.day, 8);
+        await into(txns).insert(TxnsCompanion.insert(
+          kind: 'expense',
+          amountMinor: HabitRule.perDay(h.unitPriceMinor, h.timesPerDay),
+          currency: h.currency,
+          categoryId: Value(h.categoryId),
+          note: Value(h.timesPerDay > 1 ? '${h.name} ×${h.timesPerDay}' : h.name),
+          date: at,
+        ));
+        created++;
+      }
+      await (update(habits)..where((t) => t.id.equals(h.id)))
+          .write(HabitsCompanion(lastGenerated: Value(HabitRule.dayKey(now))));
+    }
+    return created;
+  }
 
   // ---- Deudas ----
   Stream<List<Debt>> watchDebts() => select(debts).watch();

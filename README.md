@@ -21,12 +21,13 @@ Planificá tu sueldo, ahorrá el 50 % y mirá crecer tu plata, en guaraníes (�
 
 La mayoría de las apps de finanzas controlan tus gastos. AltFin va un paso más: te ayuda a **hacerte más rico**. Parte de una regla simple, ahorrar la mitad de tu sueldo, y te acompaña todos los días para que anotes tus gastos sin culpa, con una mascota amigable.
 
-- **Tu sueldo, repartido:** Modo Cohete (40 % necesidades · 10 % gustos · **50 % ahorro/inversión**), Equilibrado (50/20/30) o personalizado.
+- **Tu sueldo, repartido:** Modo Cohete (40 % necesidades · 10 % gustos · **50 % ahorro/inversión**), Equilibrado (50/20/30), **Personalizado** (tus porcentajes, incluso 0 % de ahorro) o **Sin porcentaje**. Nada es obligatorio: el sueldo y el porcentaje se pueden **omitir** (por ejemplo, si estás sin trabajo) y cargar cuando quieras.
 - **"Hoy podés gastar ₲ X":** un número claro, calculado con lo que te queda del mes.
 - **Anotar en 3 toques** (o con el teclado en PC: `Ctrl+N`, números, `Enter`).
 - **Presupuesto por categoría** con barras verde → naranja → rojo.
 - **Metas de ahorro** y **simulador de interés compuesto** (cuánto crece tu plata en 10 años).
 - **Gastos fijos** (alquiler, internet, Netflix) que se anotan solos el día de cobro.
+- **Autobús y gastos repetitivos** (merienda, café...): elegís cuántas veces al día, el precio y los días de la semana, y se anotan solos.
 - **Plan de pago de deudas**: método avalancha (menos intereses) o bola de nieve (más motivación), con pago extra y fecha estimada para quedar libre de deudas.
 - **Informe** de 6 meses, tasa de ahorro y gastos por categoría.
 - **Finn y la gamificación:** racha diaria, XP, niveles, insignias y recordatorios con su voz.
@@ -49,7 +50,7 @@ Las capturas se generan con datos de ejemplo. El diseño completo (mockups, sist
 
 ## Estado del proyecto
 
-Versión **0.2.0 (alfa)**. Funciona y está probada (54 pruebas automáticas, y uso real en Windows), pero todavía le faltan cosas. Ver la [hoja de ruta](#hoja-de-ruta).
+Versión **0.3.0 (alfa)**. Funciona y está probada (80 pruebas automáticas, y uso real en Windows), pero todavía le faltan cosas. Ver la [hoja de ruta](#hoja-de-ruta).
 
 | Plataforma | Estado |
 |---|---|

@@ -19,6 +19,8 @@ import '../../state/providers.dart';
 import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/widgets.dart';
 import '../debts/debts_screen.dart';
+import '../habits/habits_screen.dart';
+import '../plan/plan_screen.dart';
 import '../reports/reports_screen.dart';
 import '../subscriptions/subscriptions_screen.dart';
 
@@ -94,6 +96,10 @@ class SettingsScreen extends ConsumerWidget {
         AltCard(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Dividers(children: [
+            _navRow(c, 'cash', 'g', 'Sueldo y plan de ahorro', 'Todo opcional: sueldo, porcentaje o ninguno',
+                () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PlanScreen()))),
+            _navRow(c, 'bus', 'b', 'Autobús y gastos repetitivos', 'Veces al día, precio y días',
+                () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HabitsScreen()))),
             _navRow(c, 'tv', 'p', 'Gastos fijos y suscripciones', 'Alquiler, internet, Netflix...',
                 () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SubscriptionsScreen()))),
             _navRow(c, 'card', 'b', 'Deudas', 'Plan de pago: avalancha o bola de nieve',

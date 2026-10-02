@@ -9,6 +9,8 @@ import '../../state/providers.dart';
 import '../../ui/finn/finn.dart';
 import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/widgets.dart';
+import '../habits/habits_screen.dart';
+import '../plan/plan_screen.dart';
 
 class BudgetScreen extends ConsumerWidget {
   const BudgetScreen({super.key});
@@ -58,13 +60,39 @@ class BudgetScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Presupuesto', style: TextStyle(fontWeight: FontWeight.w900))),
       body: ListView(padding: const EdgeInsets.fromLTRB(20, 4, 20, 24), children: [
+        if (summary.hasPlan)
         Row(children: [
           ring('Necesidades', summary.spentNeeds, summary.split.needs, 'b'),
           const SizedBox(width: 10),
           ring('Gustos', summary.spentWants, summary.split.wants, 'o'),
           const SizedBox(width: 10),
           ring('Ahorro', summary.saved, summary.split.savings, 'g'),
-        ]),
+        ])
+        else
+          AltCard(
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PlanScreen())),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('Sin porcentajes de ahorro', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 6),
+              Text('Gastaste ${summary.spentTotal.format()} este mes. Tocá para armar un plan de ahorro cuando quieras.',
+                  style: TextStyle(color: c.muted, fontWeight: FontWeight.w700)),
+            ]),
+          ),
+        const SizedBox(height: 14),
+        AltCard(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HabitsScreen())),
+          child: Row(children: [
+            const IconTile('bus', tone: 'b', size: 48),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('Autobús y gastos repetitivos', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                Text('Veces al día, precio y días: se anotan solos.', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+              ]),
+            ),
+            Icon(Icons.chevron_right_rounded, color: c.muted),
+          ]),
+        ),
         const SizedBox(height: 14),
         AltCard(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),

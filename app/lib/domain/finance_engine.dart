@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'money.dart';
 
 /// Perfil de ahorro: porcentajes de necesidades / gustos / ahorro+inversión.
-/// Siempre suman 100.
+/// Suman 100, salvo [none] (sin porcentajes: el usuario decide no usar un plan).
 class SavingsProfile {
   const SavingsProfile._(this.id, this.needsPct, this.wantsPct, this.savingsPct);
 
@@ -23,6 +23,9 @@ class SavingsProfile {
   }
 
   final String id;
+
+  /// ¿Tiene reparto por porcentajes? `false` en [none].
+  bool get hasPlan => id != 'none';
   final int needsPct;
   final int wantsPct;
   final int savingsPct;
@@ -33,11 +36,29 @@ class SavingsProfile {
   /// Equilibrado: 50 / 20 / 30.
   static const balanced = SavingsProfile._('balanced', 50, 20, 30);
 
-  static SavingsProfile byId(String id) => switch (id) {
-        'rocket' => rocket,
-        'balanced' => balanced,
-        _ => throw ArgumentError.value(id, 'id', 'perfil desconocido'),
-      };
+  /// Sin porcentajes: no se reparte el sueldo ni se fija una meta de ahorro.
+  static const none = SavingsProfile._('none', 0, 0, 0);
+
+  /// Un perfil por su id. Para `custom` se pasan los porcentajes guardados;
+  /// si no son válidos (no suman 100) se usa Modo Cohete.
+  static SavingsProfile byId(String id, {int needs = 40, int wants = 10, int savings = 50}) {
+    switch (id) {
+      case 'rocket':
+        return rocket;
+      case 'balanced':
+        return balanced;
+      case 'none':
+        return none;
+      case 'custom':
+        try {
+          return SavingsProfile.custom(needsPct: needs, wantsPct: wants, savingsPct: savings);
+        } on ArgumentError {
+          return rocket;
+        }
+      default:
+        throw ArgumentError.value(id, 'id', 'perfil desconocido');
+    }
+  }
 }
 
 /// Reparto del sueldo del mes en bloques.
@@ -59,6 +80,10 @@ class BudgetSplit {
   factory BudgetSplit.compute(Money netIncome, SavingsProfile profile) {
     if (netIncome.isNegative) {
       throw ArgumentError('El sueldo no puede ser negativo');
+    }
+    if (!profile.hasPlan) {
+      final z = Money.zero(netIncome.currency);
+      return BudgetSplit(needs: z, wants: z, savings: z);
     }
     final needs = netIncome.percent(profile.needsPct);
     final wants = netIncome.percent(profile.wantsPct);

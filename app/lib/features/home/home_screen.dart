@@ -12,6 +12,7 @@ import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/widgets.dart';
 import '../../util.dart';
 import '../budget/budget_screen.dart';
+import '../plan/plan_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -32,7 +33,11 @@ class HomeScreen extends ConsumerWidget {
     final loggedToday = logged.any((d) => dayOnly(d) == dayOnly(now));
     final budget = summary.split.needs + summary.split.wants;
     final used = budget.minor == 0 ? 0.0 : summary.spentTotal.minor / budget.minor;
-    final pose = used >= 1 ? FinnPose.worry : (used >= .8 ? FinnPose.think : FinnPose.happy);
+    final noIncome = !summary.hasIncome;
+    final pose = noIncome
+        ? FinnPose.think
+        : (used >= 1 ? FinnPose.worry : (used >= .8 ? FinnPose.think : FinnPose.happy));
+    void openPlan() => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PlanScreen()));
     final hello = settings.name.isEmpty ? 'Buen día' : 'Buen día, ${settings.name}';
     final catById = {for (final x in cats) x.id: x};
 
@@ -45,17 +50,19 @@ class HomeScreen extends ConsumerWidget {
           ),
           Pill('$streak', tone: 'o', icon: 'flame'),
         ]);
-    final hero = MintCard(
+    final hero = GestureDetector(
+        onTap: noIncome ? openPlan : null,
+        child: MintCard(
           padding: const EdgeInsets.fromLTRB(8, 12, 14, 12),
           child: Row(children: [
             FinnView(pose: pose, size: 92),
             const SizedBox(width: 8),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('PODÉS GASTAR HOY', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                Text(noIncome ? 'SIN INGRESOS CARGADOS' : 'PODÉS GASTAR HOY', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
                 FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: Text(fmt(summary.dailyAllowance), style: numStyle(34)),
+                  child: Text(noIncome ? '${settings.currency.symbol} —' : fmt(summary.dailyAllowance), style: numStyle(34)),
                 ),
                 Text(
                   _finnLine(used, summary, settings),
@@ -64,9 +71,9 @@ class HomeScreen extends ConsumerWidget {
               ]),
             ),
           ]),
-        );
+        ));
     final plan = AltCard(
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BudgetScreen())),
+          onTap: summary.hasPlan ? () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BudgetScreen())) : openPlan,
           child: Column(children: [
             Row(children: [
               const Text('Tu plan del mes', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
@@ -75,11 +82,26 @@ class HomeScreen extends ConsumerWidget {
                   style: TextStyle(color: c.muted, fontWeight: FontWeight.w700, fontSize: 12)),
             ]),
             const SizedBox(height: 12),
-            _planRow('home', 'Necesidades', summary.spentNeeds, summary.split.needs, 'b'),
-            const SizedBox(height: 10),
-            _planRow('clapper', 'Gustos', summary.spentWants, summary.split.wants, 'o'),
-            const SizedBox(height: 10),
-            _planRow('sprout', 'Ahorro e inversión', summary.saved, summary.split.savings, 'g'),
+            if (summary.hasPlan) ...[
+              _planRow('home', 'Necesidades', summary.spentNeeds, summary.split.needs, 'b'),
+              const SizedBox(height: 10),
+              _planRow('clapper', 'Gustos', summary.spentWants, summary.split.wants, 'o'),
+              const SizedBox(height: 10),
+              _planRow('sprout', 'Ahorro e inversión', summary.saved, summary.split.savings, 'g'),
+            ] else ...[
+              _plainRow('home', 'Necesidades', summary.spentNeeds),
+              const SizedBox(height: 8),
+              _plainRow('clapper', 'Gustos', summary.spentWants),
+              const SizedBox(height: 8),
+              _plainRow('sprout', 'Ahorro e inversión', summary.saved),
+              const SizedBox(height: 10),
+              Text(
+                noIncome
+                    ? 'Sin sueldo cargado por ahora. Tocá acá cuando quieras agregarlo.'
+                    : 'Sin porcentajes. Tocá acá si querés armar un plan de ahorro.',
+                style: TextStyle(color: c.muted, fontSize: 12, fontWeight: FontWeight.w700),
+              ),
+            ],
           ]),
         );
     final moves = AltCard(
@@ -120,7 +142,18 @@ class HomeScreen extends ConsumerWidget {
     final goals = ref.watch(goalsProvider).value ?? const <Goal>[];
     final goal = goals.isEmpty ? null : goals.first;
     final savedRatio = summary.split.savings.minor == 0 ? 0.0 : summary.saved.minor / summary.split.savings.minor;
-    final savingsCard = AltCard(
+    final savingsCard = !summary.hasPlan
+        ? AltCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('Ahorro del mes', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 14),
+              FittedBox(fit: BoxFit.scaleDown, child: Text(fmt(summary.saved), style: numStyle(26))),
+              const SizedBox(height: 4),
+              Text('Sin porcentaje definido', style: TextStyle(color: c.muted, fontSize: 12, fontWeight: FontWeight.w700)),
+            ]),
+          )
+        : AltCard(
       padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -217,10 +250,19 @@ class HomeScreen extends ConsumerWidget {
   }
 
   String _finnLine(double used, MonthSummary s, AppSettings st) {
+    if (!s.hasIncome) return 'Cuando tengas ingresos, cargalos y te digo cuánto podés gastar.';
     if (used >= 1) return 'Te pasaste del plan. Mañana lo ajustamos juntos.';
     if (used >= .8) return 'Vamos cerca del límite. ¡Con cuidado!';
     return '¡Vas bien! Te quedan ${fmt(s.leftToSpend)} para ${s.daysLeft} días.';
   }
+
+  Widget _plainRow(String icon, String name, Money spent) => Row(children: [
+        AppIcon(icon, size: 18),
+        const SizedBox(width: 6),
+        Text(name, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+        const Spacer(),
+        Text(fmt(spent), style: numStyle(13, weight: FontWeight.w700)),
+      ]);
 
   Widget _planRow(String icon, String name, Money spent, Money total, String tone) {
     final status = tone == 'g' ? BudgetStatus.ok : FinanceEngine.budgetStatus(spent: spent, limit: total);

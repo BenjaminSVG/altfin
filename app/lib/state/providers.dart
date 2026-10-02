@@ -34,6 +34,9 @@ class AppSettings {
     this.pinSalt = '',
     this.debtStrategy = 'avalanche',
     this.debtExtraMinor = 0,
+    this.customNeeds = 40,
+    this.customWants = 10,
+    this.customSavings = 50,
   });
 
   factory AppSettings.fromMap(Map<String, String> m) => AppSettings(
@@ -53,6 +56,9 @@ class AppSettings {
         pinSalt: m['pin_salt'] ?? '',
         debtStrategy: m['debt_strategy'] ?? 'avalanche',
         debtExtraMinor: int.tryParse(m['debt_extra'] ?? '') ?? 0,
+        customNeeds: int.tryParse(m['pct_needs'] ?? '') ?? 40,
+        customWants: int.tryParse(m['pct_wants'] ?? '') ?? 10,
+        customSavings: int.tryParse(m['pct_savings'] ?? '') ?? 50,
       );
 
   final bool onboarded;
@@ -71,11 +77,15 @@ class AppSettings {
   final String pinSalt;
   final String debtStrategy;
   final int debtExtraMinor;
+  final int customNeeds;
+  final int customWants;
+  final int customSavings;
 
   bool get hasPin => pinHash.isNotEmpty;
 
   Money get netIncome => Money(netIncomeMinor, currency);
-  SavingsProfile get profile => SavingsProfile.byId(profileId);
+  SavingsProfile get profile =>
+      SavingsProfile.byId(profileId, needs: customNeeds, wants: customWants, savings: customSavings);
   Fx get fx => Fx(pygPerUsd);
   int get level => Gamification.levelForXp(xp);
 }
@@ -117,6 +127,8 @@ class MonthSummary {
     required this.daysLeft,
     required this.leftToSpend,
     required this.spentByCategory,
+    required this.hasPlan,
+    required this.hasIncome,
   });
 
   final BudgetSplit split;
@@ -124,6 +136,12 @@ class MonthSummary {
   final Money dailyAllowance, leftToSpend;
   final int daysLeft;
   final Map<int?, Money> spentByCategory;
+
+  /// ¿Hay reparto por porcentajes? (no si eligió "sin porcentaje" o no cargó sueldo)
+  final bool hasPlan;
+
+  /// ¿Hay algún ingreso para el mes (sueldo o ingresos anotados)?
+  final bool hasIncome;
 
   Money get spentTotal => spentNeeds + spentWants;
 
@@ -157,7 +175,10 @@ class MonthSummary {
       }
     }
     final daysLeft = FinanceEngine.daysRemainingInMonth(now);
-    final budget = split.needs + split.wants;
+    final plan = settings.profile.hasPlan && settings.netIncome.minor > 0;
+    final available = settings.netIncome + extra;
+    // Con plan: lo asignado a necesidades + gustos. Sin plan: todo lo que ingresó.
+    final budget = plan ? split.needs + split.wants : available;
     final left = (budget - needs - wants).clampMin(zero);
     return MonthSummary(
       split: split,
@@ -167,6 +188,8 @@ class MonthSummary {
       extraIncome: extra,
       daysLeft: daysLeft,
       leftToSpend: left,
+      hasPlan: plan,
+      hasIncome: available.minor > 0,
       dailyAllowance: FinanceEngine.dailyAllowance(
         variableBudget: budget,
         spentSoFar: needs + wants,
@@ -210,4 +233,8 @@ final recentTxnsProvider = StreamProvider<List<Txn>>((ref) {
 
 final debtsProvider = StreamProvider<List<Debt>>(
   (ref) => ref.watch(dbProvider).watchDebts(),
+);
+
+final habitsProvider = StreamProvider<List<Habit>>(
+  (ref) => ref.watch(dbProvider).watchHabits(),
 );

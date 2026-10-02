@@ -34,6 +34,7 @@ Archivo `lib/data/database.dart` (más `database.g.dart`, generado y versionado 
 | `Goals` | Metas de ahorro |
 | `Recurrings` | Gastos fijos que se anotan solos |
 | `Debts` | Deudas del plan de pago (saldo, tasa anual, mínimo) |
+| `Habits` | Gastos repetitivos: veces al día × precio, en días de la semana (máscara de bits) |
 | `DayChecks` | Días marcados "hoy no gasté" (cuentan para la racha) |
 | `Settings` | Ajustes clave/valor (sueldo, perfil, XP, PIN hasheado…) |
 
@@ -49,6 +50,8 @@ La hora actual se inyecta con `clockProvider`, lo que permite probar "mitad de m
 - **Notificaciones** (`lib/services/notification_service.dart`): se agendan los próximos 14 días a la hora elegida, omitiendo hoy si ya registraste. Solo Android por ahora.
 - **Bloqueo con PIN** (`features/lock/lock_gate.dart`): pide PIN al abrir y tras 30 s en segundo plano.
 - **Copia de seguridad** (`lib/data/backup.dart`): JSON con todas las tablas; restaurar reemplaza todo dentro de una transacción.
+- **Hábitos de gasto**: `HabitRule` (días de la semana como bits, estimado del mes, días a generar) y `generateDueHabits` anotan un movimiento por día; se ejecuta al abrir la app y al volver a ella.
+- **Plan de ahorro**: `SavingsProfile` (rocket, balanced, custom, none). Sin plan (`hasPlan == false`) el presupuesto usa todo lo ingresado; sin ingresos no se calcula "podés gastar hoy".
 - **Deudas**: `DebtPlanner` simula avalancha y bola de nieve en enteros (el total pagado = capital + intereses exacto).
 - **Gastos fijos**: `RecurringRule` decide si toca generar el gasto del mes; `generateDueRecurrings` se ejecuta al abrir la app.
 - **Adaptación celular/PC** (`features/shell/app_shell.dart`): barra inferior en celular y barra lateral desde 900 px; atajos `Ctrl+N` / `Ctrl+Alt+G`.

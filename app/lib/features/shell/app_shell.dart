@@ -25,17 +25,32 @@ class AppShell extends ConsumerStatefulWidget {
   ConsumerState<AppShell> createState() => _AppShellState();
 }
 
-class _AppShellState extends ConsumerState<AppShell> {
+class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver {
   int index = 0;
 
   @override
   void initState() {
     super.initState();
     HardwareKeyboard.instance.addHandler(_onKey);
+    WidgetsBinding.instance.addObserver(this);
     // Anota los gastos fijos que vencieron (alquiler, suscripciones...).
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(dbProvider).generateDueRecurrings(ref.read(clockProvider)());
+      _generateDue();
     });
+  }
+
+  /// Anota los gastos fijos y los hábitos (autobús, merienda...) que ya tocan.
+  Future<void> _generateDue() async {
+    final db = ref.read(dbProvider);
+    final now = ref.read(clockProvider)();
+    await db.generateDueRecurrings(now);
+    await db.generateDueHabits(now);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Al volver a la app (otro día) se anotan los hábitos que faltan.
+    if (state == AppLifecycleState.resumed) _generateDue();
   }
 
   bool _addOpen = false;
@@ -54,6 +69,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   void dispose() {
     HardwareKeyboard.instance.removeHandler(_onKey);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

@@ -2,6 +2,16 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto sigue [versionado semántico](https://semver.org/lang/es/).
 
+## [0.3.0] — 2026-10-01
+
+### Agregado
+- **Nada es obligatorio en el onboarding:** botón "Omitir" en el sueldo y en el porcentaje de ahorro (por ejemplo, si la persona está desempleada). El sueldo se puede cargar o quitar después en Ajustes → "Sueldo y plan de ahorro".
+- **Plan de ahorro flexible:** además de Modo Cohete y Equilibrado, ahora hay **Personalizado** (porcentajes propios; el ahorro es lo que sobra y puede ser 0 %) y **Sin porcentaje** (no fijar meta de ahorro).
+- **Gastos repetitivos** (autobús, merienda, café...): se define cuántas veces al día, el precio de cada vez y los días de la semana; la app los anota sola cada día y estima el gasto del mes. Incluye el atajo "Autobús".
+- La app funciona sin sueldo: el inicio y el presupuesto se adaptan (sin "podés gastar hoy" si no hay ingresos, y sin porcentajes si no hay plan).
+- Migración de base de datos a la versión 4; la copia de seguridad incluye los hábitos.
+- 80 pruebas automáticas.
+
 ## [0.2.0] — 2026-10-01
 
 ### Agregado
