@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:path/path.dart' as p;
@@ -14,7 +13,7 @@ import '../../data/backup.dart';
 import '../../domain/csv_export.dart';
 import '../../domain/reminder_times.dart';
 import '../../domain/money.dart';
-import '../../domain/pin.dart';
+import '../security/security_screen.dart';
 import '../../services/notification_service.dart';
 import '../../state/providers.dart';
 import '../../ui/theme/app_theme.dart';
@@ -145,9 +144,15 @@ class SettingsScreen extends ConsumerWidget {
             _navRow(c, 'save', 'o', 'Exportar a CSV', 'Abrilo en Excel o Google Sheets', () => _export(context, ref)),
             _navRow(c, 'save', 'g', 'Copia de seguridad', 'Guardá todos tus datos en un archivo', () => _backup(context, ref)),
             _navRow(c, 'sprout', 'g', 'Restaurar copia', 'Recuperá tus datos desde un archivo', () => _restore(context, ref)),
-            _navRow(c, 'lock', 'b', s.hasPin ? 'Quitar PIN' : 'Proteger con PIN',
-                s.hasPin ? 'La app se abre sin PIN' : 'Pedir PIN de 4 dígitos al abrir',
-                () => s.hasPin ? _removePin(context, ref) : _setPin(context, ref)),
+            _navRow(
+                c,
+                'lock',
+                'b',
+                'Seguridad',
+                s.hasPin
+                    ? 'Protegida con ${s.lockKind.label}${s.biometric ? ' y huella' : ''}'
+                    : 'PIN, contraseña o huella para abrir la app',
+                () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SecurityScreen()))),
           ]),
         ),
         const SizedBox(height: 16),
@@ -212,51 +217,8 @@ class SettingsScreen extends ConsumerWidget {
         ),
       );
 
-  Future<String?> _askPin(BuildContext context, String title) {
-    final ctl = TextEditingController();
-    return showDialog<String>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(title),
-        content: TextField(
-          controller: ctl,
-          autofocus: true,
-          obscureText: true,
-          maxLength: PinLock.length,
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: const InputDecoration(hintText: '4 dígitos'),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
-          TextButton(onPressed: () => Navigator.pop(context, ctl.text), child: const Text('Aceptar')),
-        ],
-      ),
-    );
-  }
-
   void _toast(BuildContext context, String msg) =>
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-
-  Future<void> _setPin(BuildContext context, WidgetRef ref) async {
-    final a = await _askPin(context, 'Elegí un PIN');
-    if (a == null || !PinLock.isValidFormat(a) || !context.mounted) return;
-    final b = await _askPin(context, 'Repetí el PIN');
-    if (!context.mounted) return;
-    if (a != b) return _toast(context, 'Los PIN no coinciden. Probá de nuevo.');
-    final salt = PinLock.newSalt();
-    await saveSettings(ref.read(dbProvider), {'pin_salt': salt, 'pin_hash': PinLock.hash(a, salt)});
-    if (context.mounted) _toast(context, 'PIN activado. Se pedirá al abrir la app.');
-  }
-
-  Future<void> _removePin(BuildContext context, WidgetRef ref) async {
-    final s = ref.read(settingsProvider).value;
-    final pin = await _askPin(context, 'Ingresá tu PIN actual');
-    if (pin == null || s == null || !context.mounted) return;
-    if (!PinLock.verify(pin, s.pinSalt, s.pinHash)) return _toast(context, 'PIN incorrecto.');
-    await saveSettings(ref.read(dbProvider), {'pin_salt': '', 'pin_hash': ''});
-    if (context.mounted) _toast(context, 'PIN quitado.');
-  }
 
   Future<void> _export(BuildContext context, WidgetRef ref) async {
     final db = ref.read(dbProvider);

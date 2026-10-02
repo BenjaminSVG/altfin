@@ -221,3 +221,4 @@ footer img{margin:0 auto 10px}footer a{color:#6EE7B0}
 .strip::-webkit-scrollbar-thumb:hover{background:var(--green-d);background-clip:padding-box}
 @media(max-width:900px){.nav{inset:10px 10px auto}}
 section[id]{scroll-margin-top:90px}
+.badge.soon{background:var(--orange)}

@@ -12,14 +12,20 @@ import '../../ui/widgets/widgets.dart';
 
 /// Registro rápido: monto → categoría → guardar (3 toques).
 class AddTxnScreen extends ConsumerStatefulWidget {
-  const AddTxnScreen({super.key});
+  const AddTxnScreen({super.key, this.initialKind = 'expense', this.fromWidget = false});
+
+  /// expense | income | saving: lo que se anota al abrir (los widgets abren directo en el tipo que dicen).
+  final String initialKind;
+
+  /// Abierta desde un widget: al guardar se vuelve a donde estaba la persona (se cierra la app).
+  final bool fromWidget;
 
   @override
   ConsumerState<AddTxnScreen> createState() => _AddTxnScreenState();
 }
 
 class _AddTxnScreenState extends ConsumerState<AddTxnScreen> {
-  String kind = 'expense';
+  late String kind = widget.initialKind;
   String digits = '';
   Currency? currency;
   int? categoryId;
@@ -94,7 +100,13 @@ class _AddTxnScreenState extends ConsumerState<AddTxnScreen> {
     ));
     final xp = ref.read(settingsProvider).value?.xp ?? 0;
     await db.setSetting('xp', '${xp + Gamification.xpPerExpense}');
-    if (mounted) Navigator.of(context).pop();
+    if (!mounted) return;
+    if (widget.fromWidget) {
+      // Vino de un widget: vuelve a donde estaba la persona, sin pasar por la app.
+      SystemNavigator.pop();
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   @override

@@ -20,6 +20,21 @@ void main() {
     expect(s.todayLabel, 'Cargá tu sueldo');
     expect(s.streakLabel, 'día de racha');
     expect(s.loggedLabel, 'Hoy ya anotaste');
-    expect(s.toMap().keys, containsAll(['today_value', 'today_label', 'streak_value', 'streak_label', 'logged_label']));
+    expect(s.toMap().keys,
+        containsAll(['today_value', 'today_label', 'streak_value', 'streak_label', 'logged_label', 'balance_value', 'balance_label']));
+  });
+
+  test('widget de balance: muestra el dinero disponible o invita a cargarlo', () {
+    final con = WidgetSnapshot.build(
+        hasIncome: true,
+        dailyAllowance: const Money.zero(Currency.pyg),
+        streak: 0,
+        loggedToday: false,
+        available: const Money(2250000, Currency.pyg));
+    expect(con.balanceValue, '₲ 2.250.000');
+    expect(con.balanceLabel, 'DINERO DISPONIBLE');
+    final sin = WidgetSnapshot.build(
+        hasIncome: true, dailyAllowance: const Money.zero(Currency.pyg), streak: 0, loggedToday: false);
+    expect(sin.balanceValue, 'Cargá tu dinero');
   });
 }

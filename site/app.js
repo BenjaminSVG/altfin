@@ -42,10 +42,11 @@
     document.getElementById('vlist').innerHTML = data.versions.map((v) => {
       const rel = byTag[v.tag];
       const has = rel && rel.assets && rel.assets.length;
-      const badge = v.latest ? '<span class="badge">Última</span>' : '';
-      const status = has ? '' : '<span class="badge off">Solo código</span>';
+      const badge = v.upcoming ? '<span class="badge soon">Próxima</span>' : (v.latest ? '<span class="badge">Última</span>' : '');
+      const status = has || v.upcoming ? '' : '<span class="badge off">Solo código</span>';
       let dl;
-      if (has) dl = downloads(rel);
+      if (v.upcoming) dl = '<div class="dls"><a class="dl none"><b>Todavía no disponible</b><span>Se publica cuando termine de probarse</span></a></div>';
+      else if (has) dl = downloads(rel);
       else if (v.latest) dl = `<div class="dls"><a class="dl none"><b>Instaladores en camino</b><span>Se publican al subir la etiqueta ${esc(v.tag)}</span></a></div>`;
       else dl = `<div class="dls"><a class="dl" href="https://github.com/${repo}/tree/${esc(v.tag)}"><b>Ver el código de esta versión</b><span>Compilala con Flutter 3.47</span></a></div>`;
       return `<details class="ver${v.latest ? ' latest' : ''}"${v.latest ? ' open' : ''}>

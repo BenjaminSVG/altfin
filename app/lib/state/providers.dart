@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/database.dart';
+import '../domain/balance.dart';
 import '../domain/challenge_rule.dart';
 import '../domain/finance_engine.dart';
 import '../domain/fx.dart';
@@ -8,6 +9,7 @@ import '../domain/net_worth.dart';
 import '../domain/reminder_times.dart';
 import '../domain/gamification.dart';
 import '../domain/money.dart';
+import '../domain/pin.dart';
 
 /// Reloj de la app (se puede reemplazar en pruebas).
 final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
@@ -35,11 +37,15 @@ class AppSettings {
     this.reminders = true,
     this.pinHash = '',
     this.pinSalt = '',
+    this.lockKind = LockKind.pin,
+    this.biometric = false,
     this.debtStrategy = 'avalanche',
     this.debtExtraMinor = 0,
     this.customNeeds = 40,
     this.customWants = 10,
     this.customSavings = 50,
+    this.openingBalanceMinor,
+    this.openingAt,
   });
 
   factory AppSettings.fromMap(Map<String, String> m) => AppSettings(
@@ -57,11 +63,15 @@ class AppSettings {
         reminders: (m['reminders'] ?? '1') == '1',
         pinHash: m['pin_hash'] ?? '',
         pinSalt: m['pin_salt'] ?? '',
+        lockKind: LockKind.fromId(m['lock_kind']),
+        biometric: m['biometric'] == '1',
         debtStrategy: m['debt_strategy'] ?? 'avalanche',
         debtExtraMinor: int.tryParse(m['debt_extra'] ?? '') ?? 0,
         customNeeds: int.tryParse(m['pct_needs'] ?? '') ?? 40,
         customWants: int.tryParse(m['pct_wants'] ?? '') ?? 10,
         customSavings: int.tryParse(m['pct_savings'] ?? '') ?? 50,
+        openingBalanceMinor: int.tryParse(m['opening_balance'] ?? ''),
+        openingAt: _floor(DateTime.tryParse(m['opening_at'] ?? '')),
       );
 
   final bool onboarded;
@@ -79,11 +89,23 @@ class AppSettings {
   final bool reminders;
   final String pinHash;
   final String pinSalt;
+
+  /// PIN de 4 dígitos o contraseña (se guarda el hash en pin_hash / pin_salt).
+  final LockKind lockKind;
+
+  /// Desbloqueo con huella, rostro o Windows Hello (siempre además del PIN/contraseña).
+  final bool biometric;
   final String debtStrategy;
   final int debtExtraMinor;
   final int customNeeds;
   final int customWants;
   final int customSavings;
+
+  /// Dinero que la persona dijo tener (y desde cuándo). null = todavía no lo cargó.
+  final int? openingBalanceMinor;
+  final DateTime? openingAt;
+
+  bool get hasOpening => openingBalanceMinor != null && openingAt != null;
 
   bool get hasPin => pinHash.isNotEmpty;
 
@@ -165,7 +187,7 @@ class MonthSummary {
       final m = settings.fx.convert(Money(t.amountMinor, Currency.fromCode(t.currency)), cur);
       switch (t.kind) {
         case 'income':
-          extra += m;
+          if (t.note != salaryNote) extra += m;
         case 'saving':
           saved += m;
         default:
@@ -314,3 +336,37 @@ final netWorthProvider = Provider<NetWorth?>((ref) {
 final habitsProvider = StreamProvider<List<Habit>>(
   (ref) => ref.watch(dbProvider).watchHabits(),
 );
+
+/// Todos los movimientos (para el balance: el dinero disponible suma desde el día en que se declaró).
+final allTxnsProvider = StreamProvider<List<Txn>>(
+  (ref) => ref.watch(dbProvider).watchAllTxns(),
+);
+
+/// Movimientos pasados a la moneda principal, listos para el balance.
+final balanceEntriesProvider = Provider<List<BalanceEntry>>((ref) {
+  final s = ref.watch(settingsProvider).value;
+  final txns = ref.watch(allTxnsProvider).value;
+  if (s == null || txns == null) return const [];
+  return [
+    for (final t in txns)
+      BalanceEntry(
+        kind: t.kind,
+        amount: s.fx.convert(Money(t.amountMinor, Currency.fromCode(t.currency)), s.currency),
+        date: t.date,
+        categoryId: t.categoryId,
+      ),
+  ];
+});
+
+/// Dinero disponible hoy, o null si la persona todavía no declaró cuánto tiene.
+final availableMoneyProvider = Provider<Money?>((ref) {
+  final s = ref.watch(settingsProvider).value;
+  if (s == null || !s.hasOpening) return null;
+  return BalanceEngine.available(
+    opening: Money(s.openingBalanceMinor!, s.currency),
+    openingAt: s.openingAt!,
+    entries: ref.watch(balanceEntriesProvider),
+  );
+});
+
+DateTime? _floor(DateTime? d) => d == null ? null : BalanceEngine.floorToSecond(d);

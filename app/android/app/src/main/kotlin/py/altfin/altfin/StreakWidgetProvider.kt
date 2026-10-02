@@ -22,7 +22,7 @@ class StreakWidgetProvider : HomeWidgetProvider() {
                 setTextViewText(R.id.streak_label, widgetData.getString("streak_label", null) ?: "días de racha")
                 val logged = widgetData.getString("logged_label", null) ?: "Hoy falta anotar"
                 setTextViewText(R.id.logged_label, logged)
-                val target = if (logged.contains("falta")) "altfin://add" else "altfin://home"
+                val target = if (logged.contains("falta")) "altfin://add?kind=expense" else "altfin://finn"
                 setOnClickPendingIntent(
                     R.id.widget_root,
                     HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java, Uri.parse(target)),

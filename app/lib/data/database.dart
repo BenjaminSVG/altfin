@@ -248,6 +248,9 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> deleteHabit(int id) => (delete(habits)..where((t) => t.id.equals(id))).go();
 
+  Future<void> setHabitPrice(int id, int unitPriceMinor) =>
+      (update(habits)..where((t) => t.id.equals(id))).write(HabitsCompanion(unitPriceMinor: Value(unitPriceMinor)));
+
   Future<void> setHabitActive(int id, bool active) =>
       (update(habits)..where((t) => t.id.equals(id))).write(HabitsCompanion(active: Value(active)));
 
@@ -307,6 +310,9 @@ class AppDatabase extends _$AppDatabase {
   Future<void> deleteRecurring(int id) =>
       (delete(recurrings)..where((t) => t.id.equals(id))).go();
 
+  Future<void> setRecurringAmount(int id, int amountMinor) =>
+      (update(recurrings)..where((t) => t.id.equals(id))).write(RecurringsCompanion(amountMinor: Value(amountMinor)));
+
   Future<void> setRecurringActive(int id, bool active) =>
       (update(recurrings)..where((t) => t.id.equals(id)))
           .write(RecurringsCompanion(active: Value(active)));
@@ -332,6 +338,11 @@ class AppDatabase extends _$AppDatabase {
     }
     return created;
   }
+
+  /// Todos los movimientos, del más nuevo al más viejo.
+  Stream<List<Txn>> watchAllTxns() => (select(txns)
+        ..orderBy([(t) => OrderingTerm.desc(t.date), (t) => OrderingTerm.desc(t.id)]))
+      .watch();
 
   /// Todos los movimientos (para informes y exportar).
   Future<List<Txn>> allTxns() => (select(txns)

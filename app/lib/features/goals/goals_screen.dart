@@ -11,7 +11,9 @@ import '../../ui/finn/finn.dart';
 import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/thousands_formatter.dart';
 import '../../ui/widgets/widgets.dart';
+import '../balance/balance_screen.dart';
 import '../debts/debts_screen.dart';
+import '../periodic/periodic_screen.dart';
 import '../grow/grow_screen.dart';
 import '../networth/net_worth_screen.dart';
 import '../shared/shared_screen.dart';
@@ -80,6 +82,8 @@ class GoalsScreen extends ConsumerWidget {
               ),
             );
         return Wrap(spacing: 10, runSpacing: 10, children: [
+          tile('coin', 'g', 'Mi balance', 'Cuánto tengo y a dónde va', const BalanceScreen()),
+          tile('bus', 'o', 'Gastos periódicos', 'Por día, semana o mes', const PeriodicScreen()),
           tile('sprout', 'g', 'Simulador', 'Interés compuesto', const GrowScreen()),
           tile('card', 'b', 'Deudas', 'Avalancha o bola de nieve', const DebtsScreen()),
           tile('chart', 'g', 'Patrimonio neto', 'Activos menos deudas', const NetWorthScreen()),

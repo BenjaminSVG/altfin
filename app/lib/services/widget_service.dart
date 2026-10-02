@@ -14,15 +14,18 @@ class WidgetSnapshot {
     required this.streakValue,
     required this.streakLabel,
     required this.loggedLabel,
+    required this.balanceValue,
+    required this.balanceLabel,
   });
 
-  final String todayValue, todayLabel, streakValue, streakLabel, loggedLabel;
+  final String todayValue, todayLabel, streakValue, streakLabel, loggedLabel, balanceValue, balanceLabel;
 
   factory WidgetSnapshot.build({
     required bool hasIncome,
     required Money dailyAllowance,
     required int streak,
     required bool loggedToday,
+    Money? available,
   }) =>
       WidgetSnapshot(
         todayValue: hasIncome ? dailyAllowance.format() : 'Sin sueldo',
@@ -30,6 +33,8 @@ class WidgetSnapshot {
         streakValue: '$streak',
         streakLabel: streak == 1 ? 'día de racha' : 'días de racha',
         loggedLabel: loggedToday ? 'Hoy ya anotaste' : 'Hoy falta anotar',
+        balanceValue: available == null ? 'Cargá tu dinero' : available.format(),
+        balanceLabel: 'DINERO DISPONIBLE',
       );
 
   Map<String, String> toMap() => {
@@ -38,17 +43,24 @@ class WidgetSnapshot {
         'streak_value': streakValue,
         'streak_label': streakLabel,
         'logged_label': loggedLabel,
+        'balance_value': balanceValue,
+        'balance_label': balanceLabel,
       };
 }
 
 /// Widgets de la pantalla de inicio (solo Android; en PC no existen).
-/// Los toques llegan como enlaces `altfin://add` y similares.
+/// Cada widget abre directo su pantalla con enlaces como `altfin://add?kind=income`, `altfin://balance` o `altfin://budget`.
 class WidgetService {
   WidgetService._();
   static final instance = WidgetService._();
 
   /// Nombres de las clases Kotlin de cada widget.
-  static const providers = ['QuickAddWidgetProvider', 'TodayWidgetProvider', 'StreakWidgetProvider'];
+  static const providers = [
+    'QuickAddWidgetProvider',
+    'TodayWidgetProvider',
+    'BalanceWidgetProvider',
+    'StreakWidgetProvider',
+  ];
 
   bool get _supported => !kIsWeb && Platform.isAndroid;
 

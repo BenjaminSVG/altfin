@@ -8,8 +8,8 @@ import android.widget.RemoteViews
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetProvider
 
-/** Widget "Podés gastar hoy": el monto del día; el "+" abre nuevo gasto, el monto abre el presupuesto. */
-class TodayWidgetProvider : HomeWidgetProvider() {
+/** Widget "Dinero disponible": el monto abre Mi balance; el "+" abre nuevo gasto. */
+class BalanceWidgetProvider : HomeWidgetProvider() {
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -17,12 +17,12 @@ class TodayWidgetProvider : HomeWidgetProvider() {
         widgetData: SharedPreferences,
     ) {
         appWidgetIds.forEach { id ->
-            val views = RemoteViews(context.packageName, R.layout.widget_today).apply {
-                setTextViewText(R.id.today_label, widgetData.getString("today_label", null) ?: "PODÉS GASTAR HOY")
-                setTextViewText(R.id.today_value, widgetData.getString("today_value", null) ?: "Abrí AltFin")
+            val views = RemoteViews(context.packageName, R.layout.widget_balance).apply {
+                setTextViewText(R.id.balance_label, widgetData.getString("balance_label", null) ?: "DINERO DISPONIBLE")
+                setTextViewText(R.id.balance_value, widgetData.getString("balance_value", null) ?: "Ver balance")
                 setOnClickPendingIntent(
                     R.id.widget_root,
-                    HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java, Uri.parse("altfin://budget")),
+                    HomeWidgetLaunchIntent.getActivity(context, MainActivity::class.java, Uri.parse("altfin://balance")),
                 )
                 setOnClickPendingIntent(
                     R.id.add_button,

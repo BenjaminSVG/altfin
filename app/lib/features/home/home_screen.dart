@@ -11,6 +11,7 @@ import '../../ui/icons/app_icon.dart';
 import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/widgets.dart';
 import '../../util.dart';
+import '../balance/balance_screen.dart';
 import '../budget/budget_screen.dart';
 import '../plan/plan_screen.dart';
 
@@ -128,13 +129,36 @@ class HomeScreen extends ConsumerWidget {
           ]),
         );
     final streakCard = _streakCard(context, ref, logged, streak, loggedToday, now);
+    final available = ref.watch(availableMoneyProvider);
+    final balance = AltCard(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BalanceScreen())),
+      child: Row(children: [
+        const IconTile('coin', tone: 'g', size: 44),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(available == null ? 'Mi balance' : 'Dinero disponible',
+                style: TextStyle(color: c.muted, fontWeight: FontWeight.w800, fontSize: 12)),
+            if (available == null)
+              const Text('Cargá cuánto dinero tenés', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16))
+            else
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(fmt(available), style: numStyle(24, weight: FontWeight.w900, color: available.isNegative ? c.red : null)),
+              ),
+          ]),
+        ),
+        Icon(Icons.chevron_right_rounded, color: c.muted),
+      ]),
+    );
 
     // Celular: una columna.
     if (MediaQuery.sizeOf(context).width < 900) {
       const gap = SizedBox(height: 14);
       return ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-        children: [header, gap, hero, gap, plan, gap, moves, gap, streakCard],
+        children: [header, gap, hero, gap, balance, gap, plan, gap, moves, gap, streakCard],
       );
     }
 
@@ -235,6 +259,8 @@ class HomeScreen extends ConsumerWidget {
             Expanded(flex: 4, child: goalCard()),
           ]),
         ),
+        vgap,
+        balance,
         vgap,
         IntrinsicHeight(
           child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [

@@ -14,6 +14,7 @@ import '../../ui/finn/finn.dart';
 import '../../ui/theme/app_theme.dart';
 import '../../ui/widgets/widgets.dart';
 import '../../util.dart';
+import '../balance/balance_screen.dart';
 import '../budget/budget_screen.dart';
 import '../finn/finn_screen.dart';
 import '../goals/goals_screen.dart';
@@ -39,10 +40,9 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
     super.initState();
     HardwareKeyboard.instance.addHandler(_onKey);
     WidgetsBinding.instance.addObserver(this);
-    // Toques en los widgets de la pantalla de inicio (Android): altfin://add abre "anotar gasto".
-    _widgetSub = WidgetService.instance.listen((uri) {
-      if (uri.host == 'add') openAdd();
-    });
+    // Toques en los widgets de la pantalla de inicio (Android). Cada widget lleva directo a su pantalla:
+    // altfin://add?kind=expense|income|saving, altfin://balance, altfin://budget, altfin://finn, altfin://home.
+    _widgetSub = WidgetService.instance.listen(_onWidgetUri);
     // Anota los gastos fijos que vencieron (alquiler, suscripciones...).
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _generateDue();
@@ -89,10 +89,31 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
     super.dispose();
   }
 
-  Future<void> openAdd() async {
+  void _onWidgetUri(Uri uri) {
+    if (!mounted) return;
+    switch (uri.host) {
+      case 'add':
+        final k = uri.queryParameters['kind'];
+        openAdd(kind: const ['expense', 'income', 'saving'].contains(k) ? k! : 'expense', fromWidget: true);
+      case 'balance':
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BalanceScreen()));
+      case 'budget':
+        if (MediaQuery.sizeOf(context).width >= 900) {
+          setState(() => index = 2);
+        } else {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BudgetScreen()));
+        }
+      case 'finn':
+        setState(() => index = 4);
+      default:
+        setState(() => index = 0);
+    }
+  }
+
+  Future<void> openAdd({String kind = 'expense', bool fromWidget = false}) async {
     if (_addOpen) return;
     _addOpen = true;
-    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AddTxnScreen()));
+    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddTxnScreen(initialKind: kind, fromWidget: fromWidget)));
     _addOpen = false;
   }
 
@@ -108,6 +129,7 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
       dailyAllowance: sum.dailyAllowance,
       streak: Gamification.currentStreak(logged, now),
       loggedToday: logged.any((d) => dayOnly(d) == dayOnly(now)),
+      available: ref.read(availableMoneyProvider),
     ));
   }
 
@@ -137,6 +159,7 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
       _pushWidgets();
     });
     ref.listen(monthSummaryProvider, (_, _) => _pushWidgets());
+    ref.listen(availableMoneyProvider, (_, _) => _pushWidgets());
     ref.listen(settingsProvider, (a, b) {
       if (a?.value?.reminders != b.value?.reminders ||
           !listEquals(a?.value?.reminderTimes, b.value?.reminderTimes)) {

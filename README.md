@@ -29,11 +29,13 @@ La mayoría de las apps de finanzas controlan tus gastos. AltFin va un paso más
 - **Gastos fijos** (alquiler, internet, Netflix) que se anotan solos el día de cobro.
 - **Autobús y gastos repetitivos** (merienda, café...): elegís cuántas veces al día, el precio y los días de la semana, y se anotan solos.
 - **Fondo de emergencia, patrimonio neto, gastos compartidos y retos sin gasto** (ver CHANGELOG).
-- **Widgets de pantalla (Android):** Anotar gasto, Podés gastar hoy y Racha.
+- **Mi balance:** cargás cuánto dinero tenés y la app lo mantiene al día con cada ingreso, gasto y ahorro. Lo ves por **día, semana, mes o año**, con el gasto promedio por día y en qué categorías se fue.
+- **Gastos periódicos:** cargás a mano lo que gastás **por día, por semana o por mes** y se anotan solos.
+- **Widgets de pantalla (Android), directos:** "Anotar" con tres botones (gasto, ingreso, ahorro) que abren esa pantalla al instante, Podés gastar hoy, Dinero disponible y Racha. Cada toque lleva a lo que dice.
 - **Plan de pago de deudas**: método avalancha (menos intereses) o bola de nieve (más motivación), con pago extra y fecha estimada para quedar libre de deudas.
 - **Informe** de 6 meses, tasa de ahorro y gastos por categoría.
 - **Finn y la gamificación:** racha diaria, XP, niveles, insignias y recordatorios con su voz.
-- **Privacidad primero:** todo se guarda en tu dispositivo. Sin cuenta, sin internet, sin anuncios. Bloqueo con PIN, **copia de seguridad** y exportación a **CSV**.
+- **Privacidad primero:** todo se guarda en tu dispositivo. Sin cuenta, sin internet, sin anuncios. Bloqueo con **PIN o contraseña** y desbloqueo con **huella, rostro o Windows Hello**, **copia de seguridad** y exportación a **CSV**.
 - Modo oscuro y diseño adaptable (celular y PC).
 
 > AltFin es una herramienta de organización y educación. **No es asesoría financiera.** Las simulaciones son orientativas.
@@ -131,7 +133,7 @@ altfin/
 
 - [ ] Notificaciones en Windows (hoy solo Android)
 - [x] Plan de pago de deudas (avalancha / bola de nieve)
-- [ ] Huella digital además del PIN
+- [x] Contraseña y huella digital además del PIN (probado en emulador; falta un celular físico)
 - [x] Widgets de pantalla en Android (probados en un emulador; falta un celular físico)
 - [ ] Atajo global en PC
 - [ ] Animaciones de Finn (Rive) y atuendos por nivel

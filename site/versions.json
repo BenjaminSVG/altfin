@@ -2,6 +2,21 @@
   "repo": "BenjaminSVG/altfin",
   "versions": [
     {
+      "version": "0.5.0-alfa",
+      "tag": "v0.5.0-alfa",
+      "date": "Próximamente",
+      "title": "Tu balance completo, contraseña y huella",
+      "upcoming": true,
+      "highlights": [
+        "Mi balance: cuánto dinero tenés, por día, semana, mes o año",
+        "Gastos periódicos que cargás a mano: por día, por semana o por mes",
+        "Contraseña además del PIN, y desbloqueo con huella, rostro o Windows Hello",
+        "Widgets directos: cada botón abre exactamente lo que dice",
+        "Widget nuevo de dinero disponible"
+      ],
+      "notes": "En desarrollo: todavía no hay instaladores de esta versión."
+    },
+    {
       "version": "0.4.0-alfa",
       "tag": "v0.4.0-alfa",
       "date": "2 de octubre de 2026",
