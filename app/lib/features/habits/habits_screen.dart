@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/database.dart';
@@ -9,6 +8,7 @@ import '../../domain/money.dart';
 import '../../state/providers.dart';
 import '../../ui/finn/finn.dart';
 import '../../ui/theme/app_theme.dart';
+import '../../ui/widgets/thousands_formatter.dart';
 import '../../ui/widgets/widgets.dart';
 
 const _dayLetters = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
@@ -114,13 +114,12 @@ class HabitsScreen extends ConsumerWidget {
                                         fontWeight: FontWeight.w900,
                                         color: h.weekdays & HabitRule.bit(d) != 0 ? Colors.white : c.muted)),
                               ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text('≈ ${Money(estimate(h), cur).format()}/mes',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: numStyle(12, color: c.greenDark, weight: FontWeight.w700)),
-                            ),
                           ]),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text('≈ ${Money(estimate(h), cur).format()} por mes',
+                                style: numStyle(12, color: c.greenDark, weight: FontWeight.w800)),
+                          ),
                           if (catById[h.categoryId] != null)
                             Padding(
                               padding: const EdgeInsets.only(top: 4),
@@ -249,7 +248,7 @@ class _HabitFormState extends State<_HabitForm> {
           TextField(
             controller: price,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [ThousandsFormatter()],
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(labelText: 'Precio de UNA vez (ej. un boleto)', prefixText: '${cur.symbol} '),
           ),

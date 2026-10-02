@@ -48,6 +48,12 @@ La mayoría de las apps de finanzas controlan tus gastos. AltFin va un paso más
 |:--:|:--:|:--:|:--:|
 | <img src="diseno/app_capturas/11-finn.png" width="190"> | <img src="diseno/app_capturas/16-informe.png" width="190"> | <img src="diseno/app_capturas/13-inicio_oscuro.png" width="190"> | <img src="diseno/app_capturas/17-bloqueo.png" width="190"> |
 
+Capturas reales en un emulador de Android (Pixel 7, Android 15), con los widgets de pantalla de inicio funcionando:
+
+| | | | |
+|---|---|---|---|
+| <img src="diseno/android_emulador/01-inicio.png" width="190"> | <img src="diseno/android_emulador/02-metas.png" width="190"> | <img src="diseno/android_emulador/03-dividir-gasto.png" width="190"> | <img src="diseno/android_emulador/06-widgets.png" width="190"> |
+
 Las capturas se generan con datos de ejemplo. El diseño completo (mockups, sistema de diseño, iconos y la hoja de personaje de Finn) está en [`diseno/`](diseno/).
 
 ## Estado del proyecto
@@ -117,7 +123,7 @@ altfin/
 - [ ] Notificaciones en Windows (hoy solo Android)
 - [x] Plan de pago de deudas (avalancha / bola de nieve)
 - [ ] Huella digital además del PIN
-- [x] Widgets de pantalla en Android (probados solo en compilación; falta probarlos en un celular)
+- [x] Widgets de pantalla en Android (probados en un emulador; falta un celular físico)
 - [ ] Atajo global en PC
 - [ ] Animaciones de Finn (Rive) y atuendos por nivel
 - [ ] Carteras de inversión y patrimonio neto
