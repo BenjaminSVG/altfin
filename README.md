@@ -67,6 +67,13 @@ Versión **0.3.0 (alfa)**. Funciona y está probada (80 pruebas automáticas, y 
 | iOS / macOS | ❌ Fuera de alcance por ahora |
 | Linux / Web | ❌ No soportados |
 
+## Descargar
+
+Las versiones alfa están en [Releases](https://github.com/BenjaminSVG/altfin/releases):
+
+- **Android:** descargá el APK **arm64-v8a** (casi todos los celulares nuevos) y abrilo; Android te pedirá permitir instalar de fuentes desconocidas. El APK está firmado con una clave de prueba: para actualizar hay que desinstalar la versión anterior (hacé antes una copia de seguridad desde Ajustes).
+- **Windows:** descargá el ZIP, descomprimilo y abrí `altfin.exe`. Si falta alguna DLL, instalá el [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe).
+
 ## Instalación y uso
 
 ### Requisitos

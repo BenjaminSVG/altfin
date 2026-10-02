@@ -1,0 +1,84 @@
+name: Publicar versión
+
+# Al subir una etiqueta v* (por ejemplo v0.4.0-alfa) compila los instaladores y
+# crea la versión en GitHub con los archivos para descargar.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    name: APK de Android
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter test
+      # Un APK por tipo de procesador (pesan ~20 MB cada uno en vez de ~65 MB).
+      - run: flutter build apk --release --split-per-abi
+      - name: Renombrar
+        run: |
+          cd build/app/outputs/flutter-apk
+          for abi in arm64-v8a armeabi-v7a x86_64; do
+            mv app-$abi-release.apk AltFin-${GITHUB_REF_NAME}-android-$abi.apk
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: app/build/app/outputs/flutter-apk/AltFin-*.apk
+
+  windows:
+    name: ZIP de Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build windows --release
+      - name: Comprimir
+        shell: pwsh
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath "AltFin-$env:GITHUB_REF_NAME-windows-x64.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: app/AltFin-*.zip
+
+  release:
+    name: Crear la versión
+    needs: [android, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Publicar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "AltFin $GITHUB_REF_NAME" \
+            --prerelease \
+            --generate-notes \
+            --notes "Versión alfa. Android: elegí el APK **arm64-v8a** (casi todos los celulares nuevos). Windows: descomprimí el ZIP y abrí altfin.exe. Todos los datos quedan en tu equipo. Mirá el CHANGELOG para saber qué trae."

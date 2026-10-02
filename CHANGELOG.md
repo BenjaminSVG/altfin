@@ -2,9 +2,10 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto sigue [versionado semántico](https://semver.org/lang/es/).
 
-## [Sin publicar]
+## [0.4.0-alfa] — 2026-10-02
 
 ### Agregado
+- **Instaladores en GitHub:** al publicar una versión se generan los APK de Android (uno por procesador) y el ZIP de Windows.
 - **Varios recordatorios al día:** en Ajustes se pueden poner hasta 6 horas (con minutos), cambiarlas o quitarlas. Las instalaciones viejas conservan su hora.
 - **Notificaciones en Windows:** ahora funcionan también en PC (el aviso de prueba y los programados). Los selectores de hora y fecha salen en español.
 - Probado en un emulador de Android 15: onboarding, gastos, Metas, dividir gastos, retos, gastos repetitivos (autobús), widgets y notificaciones. Capturas en `diseno/android_emulador/`.
