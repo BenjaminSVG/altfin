@@ -5,6 +5,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 ## [Sin publicar]
 
 ### Agregado
+- **Widgets de pantalla de Android:** "Anotar gasto" (un toque abre nuevo gasto), "Podés gastar hoy" (monto del día y botón +) y "Racha". Se actualizan solos con tus datos. Usa `home_widget`. Sin probar todavía en un celular real.
 - **Retos sin gasto** (Finn y logros): "7 días sin comer afuera", por categoría o todos los gustos; se evalúan solos con tus gastos y dan 150 XP al cumplirse. Base de datos v7. Referencia: Finch y Duolingo.
 - **Gastos compartidos** (Metas): dividir una cuenta entre amigos, ver quién le debe a quién, liquidar y anotar tu parte como gasto. Base de datos v6. Referencia: Splitwise.
 - **Patrimonio neto** (Metas): lo que tenés (cuentas, efectivo, bienes y plata en metas) menos lo que debés (deudas), en guaraníes o dólares, con evolución mes a mes. Base de datos v5; la copia de seguridad lo incluye. Referencia: Monarch.

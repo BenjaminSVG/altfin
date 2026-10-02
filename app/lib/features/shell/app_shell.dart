@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/challenge_rule.dart';
 import '../../domain/gamification.dart';
 import '../../services/notification_service.dart';
+import '../../services/widget_service.dart';
 import '../../state/providers.dart';
 import '../../ui/finn/finn.dart';
 import '../../ui/theme/app_theme.dart';
@@ -28,12 +31,17 @@ class AppShell extends ConsumerStatefulWidget {
 
 class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver {
   int index = 0;
+  StreamSubscription<Uri?>? _widgetSub;
 
   @override
   void initState() {
     super.initState();
     HardwareKeyboard.instance.addHandler(_onKey);
     WidgetsBinding.instance.addObserver(this);
+    // Toques en los widgets de la pantalla de inicio (Android): altfin://add abre "anotar gasto".
+    _widgetSub = WidgetService.instance.listen((uri) {
+      if (uri.host == 'add') openAdd();
+    });
     // Anota los gastos fijos que vencieron (alquiler, suscripciones...).
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _generateDue();
@@ -73,6 +81,7 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
   @override
   void dispose() {
     HardwareKeyboard.instance.removeHandler(_onKey);
+    _widgetSub?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -82,6 +91,21 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
     _addOpen = true;
     await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AddTxnScreen()));
     _addOpen = false;
+  }
+
+  /// Actualiza los widgets de la pantalla de inicio con los datos de hoy.
+  void _pushWidgets() {
+    final s = ref.read(settingsProvider).value;
+    final sum = ref.read(monthSummaryProvider).value;
+    final logged = ref.read(loggedDaysProvider).value;
+    if (s == null || sum == null || logged == null) return;
+    final now = ref.read(clockProvider)();
+    WidgetService.instance.push(WidgetSnapshot.build(
+      hasIncome: sum.hasIncome,
+      dailyAllowance: sum.dailyAllowance,
+      streak: Gamification.currentStreak(logged, now),
+      loggedToday: logged.any((d) => dayOnly(d) == dayOnly(now)),
+    ));
   }
 
   void _reschedule() {
@@ -100,7 +124,11 @@ class _AppShellState extends ConsumerState<AppShell> with WidgetsBindingObserver
   @override
   Widget build(BuildContext context) {
     // Cada vez que cambian los registros, se reprograman los recordatorios.
-    ref.listen(loggedDaysProvider, (_, _) => _reschedule());
+    ref.listen(loggedDaysProvider, (_, _) {
+      _reschedule();
+      _pushWidgets();
+    });
+    ref.listen(monthSummaryProvider, (_, _) => _pushWidgets());
     ref.listen(settingsProvider, (a, b) {
       if (a?.value?.reminders != b.value?.reminders ||
           a?.value?.reminderHour != b.value?.reminderHour) {

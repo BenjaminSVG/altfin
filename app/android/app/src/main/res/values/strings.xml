@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_add_label">AltFin: Anotar gasto</string>
+    <string name="widget_quick_add_desc">Un toque para anotar un gasto.</string>
+    <string name="widget_today_label">AltFin: Podés gastar hoy</string>
+    <string name="widget_today_desc">Cuánto podés gastar hoy, con botón para anotar.</string>
+    <string name="widget_streak_label">AltFin: Racha</string>
+    <string name="widget_streak_desc">Tu racha de días anotando gastos.</string>
+</resources>

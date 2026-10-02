@@ -28,6 +28,8 @@ La mayoría de las apps de finanzas controlan tus gastos. AltFin va un paso más
 - **Metas de ahorro** y **simulador de interés compuesto** (cuánto crece tu plata en 10 años).
 - **Gastos fijos** (alquiler, internet, Netflix) que se anotan solos el día de cobro.
 - **Autobús y gastos repetitivos** (merienda, café...): elegís cuántas veces al día, el precio y los días de la semana, y se anotan solos.
+- **Fondo de emergencia, patrimonio neto, gastos compartidos y retos sin gasto** (ver CHANGELOG).
+- **Widgets de pantalla (Android):** Anotar gasto, Podés gastar hoy y Racha.
 - **Plan de pago de deudas**: método avalancha (menos intereses) o bola de nieve (más motivación), con pago extra y fecha estimada para quedar libre de deudas.
 - **Informe** de 6 meses, tasa de ahorro y gastos por categoría.
 - **Finn y la gamificación:** racha diaria, XP, niveles, insignias y recordatorios con su voz.
@@ -115,7 +117,8 @@ altfin/
 - [ ] Notificaciones en Windows (hoy solo Android)
 - [x] Plan de pago de deudas (avalancha / bola de nieve)
 - [ ] Huella digital además del PIN
-- [ ] Widgets de pantalla y atajo global en PC
+- [x] Widgets de pantalla en Android (probados solo en compilación; falta probarlos en un celular)
+- [ ] Atajo global en PC
 - [ ] Animaciones de Finn (Rive) y atuendos por nivel
 - [ ] Carteras de inversión y patrimonio neto
 - [ ] Más idiomas (inglés, guaraní) y más monedas
