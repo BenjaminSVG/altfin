@@ -12,7 +12,7 @@
   const io = 'IntersectionObserver' in window
     ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 })
     : null;
-  document.querySelectorAll('.card,.steps article,.finn-states,.devices,.stats>div').forEach((el) => {
+  document.querySelectorAll('.card,.steps article,.finn-states,.devices,.stats>div,.why article,.how,.lists article,.qa details').forEach((el) => {
     el.classList.add('rev');
     io ? io.observe(el) : el.classList.add('in');
   });
@@ -88,4 +88,19 @@
     }
   }
   init();
+})();
+
+// Recorrido: arrastrar con el mouse en la compu (en el celular ya se desliza)
+(function () {
+  const s = document.getElementById('strip');
+  if (!s) return;
+  let down = false, x0 = 0, l0 = 0, moved = false;
+  s.addEventListener('mousedown', (e) => { down = true; moved = false; x0 = e.pageX; l0 = s.scrollLeft; });
+  window.addEventListener('mouseup', () => { down = false; s.classList.remove('drag'); });
+  window.addEventListener('mousemove', (e) => {
+    if (!down) return;
+    const dx = e.pageX - x0;
+    if (Math.abs(dx) > 4) { moved = true; s.classList.add('drag'); }
+    s.scrollLeft = l0 - dx;
+  });
 })();
