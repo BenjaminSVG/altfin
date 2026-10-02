@@ -47,86 +47,6 @@ class GoalsScreen extends ConsumerWidget {
         GestureDetector(onTap: () => _addGoal(context, ref, cur), child: const Pill('+ Nueva')),
       ]),
       const SizedBox(height: 14),
-      AltCard(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GrowScreen())),
-        child: Row(children: [
-          const FinnView(pose: FinnPose.rich, size: 56),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Simulador de crecimiento', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-              Text('Mirá cuánto puede crecer tu plata con interés compuesto.',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
-            ]),
-          ),
-          const Icon(Icons.chevron_right_rounded),
-        ]),
-      ),
-      const SizedBox(height: 12),
-      AltCard(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DebtsScreen())),
-        child: Row(children: [
-          const IconTile('card', tone: 'b', size: 56),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Deudas', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-              Text('Armá tu plan para salir de ellas: avalancha o bola de nieve.',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
-            ]),
-          ),
-          const Icon(Icons.chevron_right_rounded),
-        ]),
-      ),
-      const SizedBox(height: 12),
-      AltCard(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NetWorthScreen())),
-        child: Row(children: [
-          const IconTile('chart', tone: 'g', size: 56),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Patrimonio neto', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-              Text('Lo que tenés menos lo que debés, mes a mes.',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
-            ]),
-          ),
-          const Icon(Icons.chevron_right_rounded),
-        ]),
-      ),
-      const SizedBox(height: 12),
-      AltCard(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SharedScreen())),
-        child: Row(children: [
-          const IconTile('exchange', tone: 'o', size: 56),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Gastos compartidos', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-              Text('Dividí cuentas con amigos y mirá quién le debe a quién.',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
-            ]),
-          ),
-          const Icon(Icons.chevron_right_rounded),
-        ]),
-      ),
-      const SizedBox(height: 12),
-      AltCard(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EmergencyFundScreen())),
-        child: Row(children: [
-          const IconTile('lifebuoy', tone: 'b', size: 56),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Fondo de emergencia', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-              Text('Calculá cuánto guardar para imprevistos: 3, 6 o 9 meses de gastos.',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
-            ]),
-          ),
-          const Icon(Icons.chevron_right_rounded),
-        ]),
-      ),
-      const SizedBox(height: 14),
       if (goals.isEmpty)
         AltCard(
           child: Column(children: [
@@ -140,6 +60,33 @@ class GoalsScreen extends ConsumerWidget {
         _goalCard(context, ref, g, cur, monthlySaving),
         const SizedBox(height: 12),
       ],
+      const SizedBox(height: 14),
+      Text('HERRAMIENTAS', style: TextStyle(color: c.muted, fontWeight: FontWeight.w900, fontSize: 12)),
+      const SizedBox(height: 8),
+      LayoutBuilder(builder: (context, box) {
+        final w = (box.maxWidth - 10) / 2;
+        Widget tile(String icon, String tone, String title, String sub, Widget screen) => SizedBox(
+              width: w,
+              child: AltCard(
+                padding: const EdgeInsets.all(12),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen)),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  IconTile(icon, tone: tone, size: 40),
+                  const SizedBox(height: 8),
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+                  const SizedBox(height: 2),
+                  Text(sub, style: TextStyle(color: c.muted, fontSize: 11, fontWeight: FontWeight.w700)),
+                ]),
+              ),
+            );
+        return Wrap(spacing: 10, runSpacing: 10, children: [
+          tile('sprout', 'g', 'Simulador', 'Interés compuesto', const GrowScreen()),
+          tile('card', 'b', 'Deudas', 'Avalancha o bola de nieve', const DebtsScreen()),
+          tile('chart', 'g', 'Patrimonio neto', 'Activos menos deudas', const NetWorthScreen()),
+          tile('exchange', 'o', 'Compartidos', 'Dividir con amigos', const SharedScreen()),
+          tile('lifebuoy', 'b', 'Fondo de emergencia', '3, 6 o 9 meses', const EmergencyFundScreen()),
+        ]);
+      }),
     ]);
   }
 
