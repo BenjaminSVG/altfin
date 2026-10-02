@@ -1,0 +1,60 @@
+{
+  "repo": "BenjaminSVG/altfin",
+  "versions": [
+    {
+      "version": "0.4.0-alfa",
+      "tag": "v0.4.0-alfa",
+      "date": "2 de octubre de 2026",
+      "title": "Widgets, retos y gastos compartidos",
+      "latest": true,
+      "highlights": [
+        "Widgets de pantalla en Android: anotar gasto, cuánto podés gastar hoy y racha",
+        "Retos sin gasto que dan XP a Finn",
+        "Gastos compartidos: dividí la cuenta entre amigos y mirá quién debe a quién",
+        "Patrimonio neto y fondo de emergencia (regla 3-6-9)",
+        "Metas con plazo: te dice cuánto ahorrar por mes; editá o borrá con pulsación larga",
+        "Hasta 6 recordatorios al día, también en Windows"
+      ],
+      "notes": "Probada en un emulador de Android 15 y en Windows 11. Todavía no en un celular real."
+    },
+    {
+      "version": "0.3.0",
+      "tag": "v0.3.0",
+      "date": "1 de octubre de 2026",
+      "title": "Nada es obligatorio",
+      "highlights": [
+        "Podés omitir el sueldo y el porcentaje de ahorro al empezar",
+        "Plan de ahorro Personalizado o Sin porcentaje",
+        "Gastos repetitivos (autobús, merienda, café) que se anotan solos",
+        "La app funciona sin sueldo"
+      ],
+      "notes": "Sin instalador publicado: solo código fuente."
+    },
+    {
+      "version": "0.2.0",
+      "tag": "v0.2.0",
+      "date": "1 de octubre de 2026",
+      "title": "Deudas bajo control",
+      "highlights": [
+        "Plan para pagar deudas: avalancha y bola de nieve",
+        "Registro de pagos y comparación de intereses",
+        "Atajo Ctrl+N y panel de varias columnas en PC"
+      ],
+      "notes": "Sin instalador publicado: solo código fuente."
+    },
+    {
+      "version": "0.1.0-alfa",
+      "tag": "v0.1.0",
+      "date": "1 de octubre de 2026",
+      "title": "La primera versión",
+      "highlights": [
+        "Podés gastar hoy, plan del mes y racha",
+        "Anotar un gasto en 3 toques",
+        "Presupuesto, metas y simulador de interés compuesto",
+        "Finn: niveles, XP, insignias",
+        "Guaraníes y dólares, modo oscuro, PIN y copia de seguridad"
+      ],
+      "notes": "Sin instalador publicado: solo código fuente."
+    }
+  ]
+}

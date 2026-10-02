@@ -16,3 +16,4 @@ Thumbs.db
 # Renders temporales de diseño
 diseno/_m.*
 diseno/ui/_*
+site/.vercel

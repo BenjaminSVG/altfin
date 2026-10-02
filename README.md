@@ -67,6 +67,8 @@ Versión **0.3.0 (alfa)**. Funciona y está probada (80 pruebas automáticas, y 
 | iOS / macOS | ❌ Fuera de alcance por ahora |
 | Linux / Web | ❌ No soportados |
 
+**Sitio web:** https://altfin.vercel.app (descargas por versión)
+
 ## Descargar
 
 Las versiones alfa están en [Releases](https://github.com/BenjaminSVG/altfin/releases):
