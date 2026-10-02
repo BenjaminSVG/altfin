@@ -149,6 +149,8 @@ class GoalsScreen extends ConsumerWidget {
     final saved = Money(g.savedMinor, cur);
     final v = target.minor == 0 ? 0.0 : saved.minor / target.minor;
     final months = FinanceEngine.monthsToGoal(target: target, current: saved, monthlySaving: monthlySaving);
+    final need = FinanceEngine.monthlyNeeded(
+        target: target, current: saved, deadline: g.deadline, now: ref.read(clockProvider)());
     final eta = v >= 1
         ? '¡Meta cumplida!'
         : (months == null ? 'Sin ahorro mensual' : 'Listo en ~$months ${months == 1 ? 'mes' : 'meses'}');
@@ -172,6 +174,15 @@ class GoalsScreen extends ConsumerWidget {
               const Spacer(),
               Text('${(v * 100).round()}%', style: TextStyle(color: c.muted, fontWeight: FontWeight.w800, fontSize: 12)),
             ]),
+            if (need != null && need.minor > 0)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  'Ahorrá ${need.format()} por mes para llegar en ${g.deadline!.month}/${g.deadline!.year}'
+                  '${monthlySaving.minor >= need.minor ? ' (vas bien)' : ''}',
+                  style: TextStyle(color: c.greenDark, fontSize: 12, fontWeight: FontWeight.w800),
+                ),
+              ),
           ]),
         ),
       ]),
@@ -212,6 +223,8 @@ class GoalsScreen extends ConsumerWidget {
     final name = TextEditingController();
     final amount = TextEditingController();
     var icon = 0;
+    int? months; // plazo opcional para la meta
+    final now = ref.read(clockProvider)();
     await showDialog<void>(
       context: context,
       builder: (ctx) => StatefulBuilder(
@@ -225,6 +238,12 @@ class GoalsScreen extends ConsumerWidget {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(prefixText: '${cur.symbol} ', hintText: 'Cuánto necesitás'),
             ),
+            const SizedBox(height: 10),
+            Align(alignment: Alignment.centerLeft, child: Text('¿En cuántos meses? (opcional)', style: TextStyle(fontWeight: FontWeight.w800, color: ctx.alt.muted))),
+            Wrap(spacing: 6, children: [
+              for (final m in const <int?>[null, 3, 6, 12, 24])
+                ChoiceChip(label: Text(m == null ? 'Sin fecha' : '$m'), selected: months == m, onSelected: (_) => setS(() => months = m)),
+            ]),
             const SizedBox(height: 14),
             Wrap(spacing: 8, runSpacing: 8, children: [
               for (var i = 0; i < _goalIcons.length; i++)
@@ -253,6 +272,7 @@ class GoalsScreen extends ConsumerWidget {
                       tone: Value(_goalIcons[icon].$2),
                       targetMinor: v * cur.factor,
                       currency: cur.code,
+                      deadline: Value(months == null ? null : DateTime(now.year, now.month + months!, now.day)),
                     ));
                 if (ctx.mounted) Navigator.pop(ctx);
               },

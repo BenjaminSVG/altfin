@@ -175,6 +175,21 @@ class FinanceEngine {
     return (missing / monthlySaving.minor).ceil();
   }
 
+  /// Cuánto ahorrar por mes para llegar a la meta antes de [deadline].
+  /// null si no hay fecha; 0 si ya está cumplida. Mínimo 1 mes (si la fecha pasó, todo junto).
+  static Money? monthlyNeeded({
+    required Money target,
+    required Money current,
+    required DateTime? deadline,
+    required DateTime now,
+  }) {
+    if (deadline == null) return null;
+    final missing = target.minor - current.minor;
+    if (missing <= 0) return Money.zero(target.currency);
+    final months = ((deadline.year - now.year) * 12 + deadline.month - now.month).clamp(1, 1200);
+    return Money((missing / months).ceil(), target.currency);
+  }
+
   /// Meta de independencia financiera: gasto anual × 25 (regla del 4 %).
   static Money financialIndependenceNumber(Money monthlyExpenses) =>
       Money(monthlyExpenses.minor * 12 * 25, monthlyExpenses.currency);

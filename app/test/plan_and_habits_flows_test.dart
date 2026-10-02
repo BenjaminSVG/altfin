@@ -317,6 +317,27 @@ void main() {
     await finish(t, db);
   });
 
+  testWidgets('meta con plazo: muestra cuánto ahorrar por mes', (t) async {
+    final db = await freshDb(onboarded: true);
+    await boot(t, db);
+    await t.tap(find.text('Metas'));
+    await t.pump(const Duration(milliseconds: 600));
+    await t.tap(find.text('+ Nueva'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    await t.enterText(find.byType(TextField).at(0), 'Laptop');
+    await t.enterText(find.byType(TextField).at(1), '6000000');
+    await t.tap(find.widgetWithText(ChoiceChip, '6'));
+    await t.pump();
+    await t.tap(find.text('Crear'));
+    await t.pumpAndSettle(const Duration(milliseconds: 100));
+    final g = (await t.runAsync(() => db.select(db.goals).get()))!.single;
+    expect(g.deadline, DateTime(2027, 4, 12));
+    await t.drag(find.byType(ListView).last, const Offset(0, -600));
+    await t.pump(const Duration(milliseconds: 400));
+    expect(find.textContaining('Ahorrá ₲ 1.000.000 por mes para llegar en 4/2027'), findsOneWidget);
+    await finish(t, db);
+  });
+
   testWidgets('en Ajustes se puede quitar el sueldo y el porcentaje', (t) async {
     final db = await freshDb(onboarded: true);
     await boot(t, db);
