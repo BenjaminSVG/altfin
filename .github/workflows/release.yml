@@ -37,19 +37,6 @@ jobs:
       - run: flutter build apk --release --split-per-abi
       - name: Renombrar
         run: |
-          NOTES="Versión alfa. Android: elegí el APK **arm64-v8a** (casi todos los celulares nuevos). Windows: descomprimí el ZIP y abrí altfin.exe. Todos los datos quedan en tu equipo. Mirá el CHANGELOG para saber qué trae."
-          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            # Ya existe (otra corrida la creó): solo se suben los archivos.
-            gh release upload "$GITHUB_REF_NAME" dist/* --clobber --repo "$GITHUB_REPOSITORY"
-          else
-            gh release create "$GITHUB_REF_NAME" dist/* \
-              --repo "$GITHUB_REPOSITORY" \
-              --title "AltFin $GITHUB_REF_NAME" \
-              --prerelease \
-              --generate-notes \
-              --notes "$NOTES"
-          fi
-|
           cd build/app/outputs/flutter-apk
           for abi in arm64-v8a armeabi-v7a x86_64; do
             mv app-$abi-release.apk AltFin-${GITHUB_REF_NAME}-android-$abi.apk
