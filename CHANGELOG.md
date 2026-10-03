@@ -2,13 +2,17 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto sigue [versionado semántico](https://semver.org/lang/es/).
 
-## [Sin publicar]
+## [0.5.0-alfa] — 2026-10-03
 
 ### Agregado
 - **Contraseña y biometría para entrar a la app:** en Ajustes → Seguridad se puede proteger la app con un **PIN de 4 dígitos** o con una **contraseña** (6 a 64 caracteres), y activar el **desbloqueo con huella, rostro o Windows Hello**. Al abrir la app pide la huella enseguida; si se cancela o falla, queda el PIN o la contraseña de respaldo. Tras 5 intentos fallidos hay que esperar 30 s (luego 2 y 10 min). La clave no se guarda: solo un hash con sal. Cambiar o quitar el bloqueo pide la clave actual. Probado en el emulador de Android con un sensor de huella virtual (activar, entrar, cancelar, clave incorrecta y correcta).
 - **Mi balance:** cargás una vez cuánto dinero tenés y la app lo mantiene al día: suma tus ingresos y resta tus gastos y ahorros. Ves lo que entró, salió y ahorraste **hoy, esta semana, este mes o este año**, el gasto promedio por día, cuántos días te alcanza el dinero a ese ritmo y en qué categorías se fue. Está en el inicio y en Metas. Si cobrás tu sueldo, un toque lo anota (no se duplica en el presupuesto).
 - **Gastos periódicos:** cargás a mano lo que gastás **cada día, cada semana o cada mes** (almuerzo, feria, alquiler) y la app lo anota sola cuando corresponde. Muestra el total por día, por semana y por mes; tocá un gasto para cambiar el monto o borrarlo. Reúne los gastos repetitivos y los fijos en una sola pantalla.
 - **Widgets directos de Android:** cada botón abre directo lo que dice. El widget "Anotar" ahora tiene tres botones (gasto, ingreso, ahorro) que abren esa pantalla ya en ese tipo, y al guardar se vuelve a donde estabas, sin pasar por la app. "Podés gastar hoy" abre el presupuesto; "Racha" abre la pantalla de nuevo gasto si hoy falta, o Finn si ya anotaste. Widget nuevo **"Dinero disponible"**, que abre Mi balance.
+
+### Conocido
+- La huella se probó en un emulador de Android con sensor virtual, no en un celular real. Windows Hello compila, pero no se pudo ejecutar para probarlo.
+- Como el APK va firmado con una clave de prueba, para pasar de la 0.4.0 a la 0.5.0 hay que desinstalar la anterior: hacé antes una copia de seguridad en Ajustes.
 
 ## [0.4.0-alfa] — 2026-10-02
 

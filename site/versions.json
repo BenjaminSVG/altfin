@@ -4,9 +4,8 @@
     {
       "version": "0.5.0-alfa",
       "tag": "v0.5.0-alfa",
-      "date": "Próximamente",
+      "date": "3 de octubre de 2026",
       "title": "Tu balance completo, contraseña y huella",
-      "upcoming": true,
       "highlights": [
         "Mi balance: cuánto dinero tenés, por día, semana, mes o año",
         "Gastos periódicos que cargás a mano: por día, por semana o por mes",
@@ -14,14 +13,14 @@
         "Widgets directos: cada botón abre exactamente lo que dice",
         "Widget nuevo de dinero disponible"
       ],
-      "notes": "En desarrollo: todavía no hay instaladores de esta versión."
+      "notes": "Probada en un emulador de Android 15 (con huella virtual) y compilada para Windows 11; Windows Hello y los widgets en un celular real todavía sin probar.",
+      "latest": true
     },
     {
       "version": "0.4.0-alfa",
       "tag": "v0.4.0-alfa",
       "date": "2 de octubre de 2026",
       "title": "Widgets, retos y gastos compartidos",
-      "latest": true,
       "highlights": [
         "Widgets de pantalla en Android: anotar gasto, cuánto podés gastar hoy y racha",
         "Retos sin gasto que dan XP a Finn",
